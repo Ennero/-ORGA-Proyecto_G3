@@ -1,0 +1,29 @@
+# Manual Técnico - Proyecto
+## Objetivos
+### Objetivo General
+- Proporcionar una explicación detallada sobre la implementación del código, la lógica utilizada y las bases para el mantenimiento futuro del programa.
+### Objetivos Específicos
+- Presentar y explicar el funcionamiento del código que implementa la solución desarrollada.
+- Detallar el proceso de diseño de las soluciones y la lógica detrás de cada una de ellas.
+
+
+## Alcances del Sistema
+
+Este manual tiene como finalidad facilitar la comprensión de cómo se implementaron las funcionalidades del programa y cómo estas interactúan entre sí para cumplir con el propósito del sistema.
+
+
+## Especificaciones técnicas
+### Requisitos de Hardware
+- Memoria RAM de 1GB //Mejora aquí los requisitos de hardware que pueda requerir un backend en python con frontend en nextJS
+- Espacio libre en el disco duro de 2GB
+- Procesador de 1GHz o superior
+- Pantalla
+- Teclado
+- Mouse (opcional)
+### Requisitos de Software 
+- Sistema operativo compatible con python
+- Editor de texto o IDE compatible que permita trabajar con python (se recomienda VScode)
+- Python
+## Lógica y descripción de la solución
+
+### Main

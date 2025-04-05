@@ -1,0 +1,114 @@
+# Manual de Usuario - Proyecto 1
+## Objetivos
+### General 
+- Explicar de manera detallada el funcionamiento y modo de juego del Buscaminas implementado en una matriz LED 4x4 controlada por Bluetooth.
+
+### Específicos
+- Facilitar una comprensión clara de la interacción entre el usuario (móvil) y el tablero de juego (Arduino y LEDs).
+
+- Detallar las reglas, comandos y cómo progresar en el juego.
+
+- Resolver posibles dudas sobre la operativa y los indicadores del juego.
+
+
+## Introducción
+Bienvenido al manual del Buscaminas Bluetooth 4x4. Este documento te guiará a través de todo lo necesario para disfrutar de esta versión del clásico juego. A diferencia del buscaminas tradicional en pantalla, interactuarás con un tablero físico compuesto por una matriz de LEDs de 4x4, indicadores luminosos y una pantalla LCD, todo controlado desde tu teléfono móvil mediante comandos enviados por Bluetooth. 
+
+## Requisito del Sistema
+Tablero Buscaminas Físico: El dispositivo que incluye la matriz LED 4x4, el Arduino, el módulo Bluetooth, un LED indicador rojo (Juego Terminado), un LED indicador verde (Juego Ganado) y una pantalla LCD para mensajes y puntuación.
+- Teléfono Móvil: Un smartphone con sistema operativo Android y capacidad Bluetooth.
+- Aplicación de Terminal Bluetooth: La aplicación __ para poder conectar el teléfono con el tablero
+
+## Flujo del juego
+
+
+### Configuración inicial
+- Asegurarse de que el tablero Buscaminas esté encendido
+- Activar el Bluetooth en tu teléfono móvil.
+- Abrir la aplicación __ para conectarse con el tablero.
+- Busca el tablero.
+- Seleccionar el tablero para emparejarlo.
+- Ahora ya se está listo para comenzar a jugar.
+
+
+### Como jugar
+El objetivo es descubrir todas las casillas de la matriz 4x4 que no contienen una bomba. La interacción se realiza enviando comandos numéricos y de texto a través de la terminal Bluetooth conectada.
+
+#### Estados del juego
+El juego tiene tres estados principales, indicados por los LEDs de colores:
+##### Estado "Jugando" (LED Azul Encendido):
+- Este es el estado inicial al comenzar una nueva partida o después de presionar el botón "Nuevo Juego".
+- El LED Azul está encendido, mientras que el Rojo y el Verde están apagados.
+- En este estado, se puede enviar números (1-16) para seleccionar casillas.
+
+##### Estado "Game Over" (LED Rojo Encendido):
+- Se activa al seleccionar una casilla que contiene una bomba.
+- El LED Azul se apaga y el LED Rojo se enciende.
+- El juego se detiene. No se pueden seleccionar más casillas.
+- Para volver a jugar, se debe de presionar el botón físico "Nuevo Juego".
+
+#### Estado "Ganaste" (LED Verde Encendido):
+- Se activa al revelar con éxito todas las casillas que no contienen bombas.
+- El LED Azul se apaga y el LED Verde se enciende.
+- El juego se detiene.
+- Para volver a jugar, se debe de presionar el botón físico "Nuevo Juego".
+
+#### Seleccionar una Casilla
+- El tablero tiene 16 casillas, numeradas del 1 al 16. Distribuidas de la siguiente manera:
+```fortran
+ 1  2  3  4
+ 5  6  7  8
+ 9 10 11 12
+13 14 15 16
+```
+- Para verificar la casilla se escribe el número de la posición (del 1 al 16) en la terminal Bluetooth y se envía.
+
+#### Resultado de selección
+El tablero respondera de la siguiente manera al comando proporcionado:
+
+##### Acierto (Si la casilla seleccionada NO contiene una bomba)
+- El tablero enviará el mensaje acierto correcto a tu terminal Bluetooth.
+- La casilla correspondiente en la matriz LED 4x4 se encenderá para indicar que ha sido revelada de forma segura.
+- La puntuación aumentará en 1 y se mostrará en la pantalla LCD.
+- El juego permanece en el estado "Jugando" (LED Azul encendido) y se podrá seguir seleccionando casillas.
+
+
+##### Fin del Juego (Si la casilla seleccionada SÍ contiene una bomba)
+- El tablero enviará el mensaje game over a la terminal Bluetooth.
+- El mensaje game over también se mostrará en la pantalla LCD.
+- El LED Azul se APAGARÁ y el LED Rojo se ENCENDERÁ.
+- La partida termina. Se entra al estado "Game Over".
+
+#### Ganar el Juego
+Se gana la partida cuando se encuentran todas las casillas que no contienen una bomba. Al hacerlo:
+- El tablero enviará el mensaje ganaste a tu terminal Bluetooth.
+- El mensaje ganaste también se mostrará en la pantalla LCD.
+- El LED Azul se APAGARÁ y el LED Verde se ENCENDERÁ.
+- La partida termina exitosamente. Entras en el estado "Ganaste".
+
+#### Iniciar nueva partida
+Una vez que el juego ha terminado, se debe de presionar el botón físico "Nuevo Juego" en el tablero para volver a jugar. Al hacerlo:
+- El LED Rojo o Verde se APAGARÁ.
+- El LED Azul se ENCENDERÁ, volviendo al estado "Jugando".
+- El contador de puntaje en la pantalla LCD se reseteará a 0.
+- El tablero de juego se reseteará para una nueva partida.
+- Ya se puede empezar a seleccionar casillas nuevamente (enviando 1-16).
+
+#### Resumen de comandos
+| Comando | Acción | Respuesta del Tablero | Efecto Principal
+|:-------:|:-------:|:-------:|:-------:|
+| [1-16]  | Verifica la casilla en la posición indicada.   | Acierto o game over   |Revela casilla, actualiza puntaje, o cambia a estado "Game Over".   |
+| reinicio   | Reinicia todo el sistema al estado inicial, saliendo del modo de juego.  | Ninguna  |Vuelve al modo configuración/arranque. Requiere nueva configuración/inicio.   |
+
+#### Indicadores del tablero
+- Matriz LED 4x4: Representa el tablero de juego. Las casillas seguras reveladas podrían encenderse. Se resetea al presionar "Nuevo Juego".
+- Pantalla LCD: Muestra la puntuación actual (se resetea con "Nuevo Juego") y mensajes de estado (game over, ganaste).
+- LED Azul: Encendido = Estado "Jugando". Apagado en "Game Over" o "Ganaste".
+- LED Rojo: Encendido = Estado "Game Over" (bomba encontrada). Se apaga al presionar "Nuevo Juego".
+- LED Verde: Encendido = Estado "Ganaste" (todas las casillas seguras reveladas). Se apaga al presionar "Nuevo Juego".
+
+#### Flujo del juego
+
+
+
+
