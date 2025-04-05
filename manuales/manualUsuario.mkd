@@ -1,0 +1,29 @@
+# Manual de Usuario - Proyecto 1
+## Objetivos
+### General 
+- Explicar el flujo de funcionamiento del programa.
+### Específicos
+- Facilitar una comprensión clara de la interacción entre las funciones del programa.
+- Detallar de manera precisa el funcionamiento de la solución implementada.
+
+## Introducción
+El presente manual tiene como objetivo proporcionar los conocimientos necesarios para utilizar el programa de manera efectiva. En este se describe detalladamente las funcionalidades del software, con especial énfasis en su flujo de trabajo.
+
+El programa es un compilador que simula el dilema del prisionero, un concepto desarrollado por Robert Axelrod. El software permite al usuario ingresar datos mediante un archivo o directamente en un área de texto designada. La entrada se divide en tres secciones principales:
+- Definición de Estrategias: Donde se especifican las estrategias que los "prisioneros" seguirán durante la simulación.
+- Definición de Partidas: Donde se configuran las condiciones y reglas de las partidas a simular.
+- Punto de Entrada: Donde se inicia la ejecución de la simulación.
+
+Una vez ejecutado, el programa genera una salida en un área designada, mostrando el desarrollo de la partida y el comportamiento de las estrategias. Además, se genera un reporte de tokens y, en caso de errores, un reporte de errores con información detallada para facilitar la corrección en el código fuente.
+
+## Requisito del Sistema
+- Poseer el ejecutable (.jar)
+- Sistema operativo compatible con JDK
+- Tener instalado JDK
+- Procesador de 1GHz o superior 
+- Memoria RAM de 2GB
+- Teclado
+- Pantalla
+- Mouse (opcional) 
+
+## Flujo de funcionalidades del programa
