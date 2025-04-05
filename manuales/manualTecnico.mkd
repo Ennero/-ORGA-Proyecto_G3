@@ -6,6 +6,7 @@
 - Presentar y explicar el funcionamiento del código que implementa la solución desarrollada.
 - Detallar el proceso de diseño de las soluciones y la lógica detrás de cada una de ellas.
 
+
 ## Alcances del Sistema
 
 Este manual tiene como finalidad facilitar la comprensión de cómo se implementaron las funcionalidades del programa y cómo estas interactúan entre sí para cumplir con el propósito del sistema.
