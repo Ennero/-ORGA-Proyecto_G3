@@ -1,29 +1,71 @@
 # Manual Técnico - Proyecto
 ## Objetivos
 ### Objetivo General
-- Proporcionar una explicación detallada sobre la implementación del código, la lógica utilizada y las bases para el mantenimiento futuro del programa.
+- Proporcionar una explicación técnica exhaustiva sobre la arquitectura, implementación, lógica de software y hardware, y las bases para el mantenimiento y futuras modificaciones del sistema Buscaminas Bluetooth 4x4.
 ### Objetivos Específicos
-- Presentar y explicar el funcionamiento del código que implementa la solución desarrollada.
-- Detallar el proceso de diseño de las soluciones y la lógica detrás de cada una de ellas.
-
+- Presentar y detallar la arquitectura del sistema, incluyendo los módulos de software (Frontend, Backend, App Móvil, Firmware Arduino) y hardware.
+- Explicar el funcionamiento y la lógica del código fuente de cada componente de software.
+- Detallar el proceso de diseño, las tecnologías seleccionadas y la justificación detrás de las decisiones de implementación.
+- Describir los protocolos de comunicación entre los distintos módulos.
+- Facilitar la comprensión de la interacción entre el software y el hardware (RAM de Flip-Flops, LEDs, LCD, Botón).
+- Proveer una guía para la configuración del entorno de desarrollo y el despliegue del sistema.
 
 ## Alcances del Sistema
 
-Este manual tiene como finalidad facilitar la comprensión de cómo se implementaron las funcionalidades del programa y cómo estas interactúan entre sí para cumplir con el propósito del sistema.
+Este manual cubre los aspectos técnicos de la implementación del proyecto Buscaminas Bluetooth 4x4. Se detalla:
+- La configuración de bombas mediante una interfaz web (Frontend Next.js) que se comunica con un servidor (Backend Python), el cual a su vez envía los datos por comunicación serial al Arduino para almacenarlos en una RAM física de 4x4 (implementada con Flip-Flops).
+- La lógica de juego ejecutada en el Arduino, controlada mediante una aplicación Android (App Inventor) vía Bluetooth.
+- La gestión de estados del juego (Configuración, Jugando, Game Over, Ganaste) y el control de los indicadores visuales (Matriz LED, LEDs de estado, LCD).
+- Los mecanismos de reinicio: botón físico "Nuevo Juego" para reintentar la partida y comando Bluetooth reinicio para volver al modo configuración.
+- Las tecnologías específicas utilizadas: Python (con pyserial), App Inventor, Arduino (C/C++), y lógica digital para la RAM.
 
 
 ## Especificaciones técnicas
 ### Requisitos de Hardware
-- Memoria RAM de 1GB //Mejora aquí los requisitos de hardware que pueda requerir un backend en python con frontend en nextJS
-- Espacio libre en el disco duro de 2GB
-- Procesador de 1GHz o superior
-- Pantalla
-- Teclado
-- Mouse (opcional)
-### Requisitos de Software 
-- Sistema operativo compatible con python
-- Editor de texto o IDE compatible que permita trabajar con python (se recomienda VScode)
-- Python
+#### Para la configuración
+- **Procesador:** Equivalente a Intel Core i3 de 2da generación o superior (Recomendado: Core i5 o superior).
+- **Memoria RAM:** Mínimo 4 GB (Recomendado: 8 GB o más para un rendimiento fluido de Node.js y Python simultáneamente).
+- **Espacio en Disco:** Mínimo 5 GB libres (para OS, Node.js, dependencias npm, entorno Python, código fuente y archivos temporales).
+- **Puerto USB:** Disponible para la conexión serial con el Arduino.
+- **Sistema Operativo:** Windows 10/11, macOS 10.15+ o Distribución Linux moderna (Ubuntu 20.04+, Fedora 34+, etc.).
+- **Periféricos:** Pantalla, Teclado, Mouse.
+- 
+
+#### Para el dispositivo de juego
+- Smartphone Android: Con capacidad Bluetooth (SPP - Serial Port Profile).
+- Versión de Android: Compatible con aplicaciones creadas en MIT App Inventor (generalmente Android 5.0 Lollipop o superior).
+
+#### Hardware del tablero
+- **Microcontrolador:** Arduino (ej. UNO, Nano, o compatible) con suficientes pines digitales/analógicos.
+- **Módulo Bluetooth:** HC-05, HC-06 o similar (configurado para comunicación serial).
+- **Memoria RAM 4x4:** Circuito implementado con Flip-Flops tipo D con lógica de direccionamiento y escritura/lectura controlada por el Arduino.
+- **Matriz LED 4x4:** Conectada para reflejar el estado de la RAM de Flip-Flops (LED ON = Bomba).
+- LEDs Indicadores de Estado: 1x Azul (Jugando), 1x Rojo (Game Over), 1x Verde (Ganaste).
+- **Pantalla LCD:** Compatible con Arduino (ej. LCD 16x2 I2C) para mostrar puntaje y mensajes.
+- **Botón Físico:** Pulsador ("Nuevo Juego") conectado a una entrada digital del Arduino.
+- **Fuente de Alimentación:** 5v adecuados para todos los componentes del tablero.
+- 
+### Requisitos de Software
+#### Para la configuración
+- **Python:** Versión 3.8 o superior.
+- **Bibliotecas Python:** pyserial (para comunicación serial), y un microframework web como Flask para el backend.
+- **Navegador Web:** Moderno (Chrome, Firefox, Edge) para interactuar con el Frontend flask.
+- **Arduino IDE:** Versión 1.8.x o 2.x para programar el Arduino.
+- Editor de Código/IDE: VS Code (recomendado), PyCharm, Sublime Text, etc.
+- **Controladores:** Para la comunicación USB-Serial (ej. CH340, FTDI) si son necesarios para el Arduino o adaptador utilizado.
+
+### Para el dispositivo móvil
+- **Aplicación Android:** El archivo .apk compilado desde MIT App Inventor.
+
+### Para el arduino
+-El sketch .ino desarrollado en el Arduino IDE.
+
 ## Lógica y descripción de la solución
+
+
+
+
+
+
 
 ### Main
