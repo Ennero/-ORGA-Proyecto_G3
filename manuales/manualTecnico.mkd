@@ -14,7 +14,7 @@ Este manual tiene como finalidad facilitar la comprensión de cómo se implement
 
 ## Especificaciones técnicas
 ### Requisitos de Hardware
-- Memoria RAM de 1GB //Mejora aquí los requisitos de hardware que pueda requerir un backend en python con frontend en nextJS
+- Memoria RAM de 1GB 
 - Espacio libre en el disco duro de 2GB
 - Procesador de 1GHz o superior
 - Pantalla
