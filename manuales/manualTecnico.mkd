@@ -22,44 +22,16 @@ Este manual cubre los aspectos técnicos de la implementación del proyecto Busc
 
 ## Especificaciones técnicas
 ### Requisitos de Hardware
-#### Para la configuración
-- **Procesador:** Equivalente a Intel Core i3 de 2da generación o superior (Recomendado: Core i5 o superior).
-- **Memoria RAM:** Mínimo 4 GB (Recomendado: 8 GB o más para un rendimiento fluido de Node.js y Python simultáneamente).
-- **Espacio en Disco:** Mínimo 5 GB libres (para OS, Node.js, dependencias npm, entorno Python, código fuente y archivos temporales).
-- **Puerto USB:** Disponible para la conexión serial con el Arduino.
-- **Sistema Operativo:** Windows 10/11, macOS 10.15+ o Distribución Linux moderna (Ubuntu 20.04+, Fedora 34+, etc.).
-- **Periféricos:** Pantalla, Teclado, Mouse.
-- 
-
-#### Para el dispositivo de juego
-- Smartphone Android: Con capacidad Bluetooth (SPP - Serial Port Profile).
-- Versión de Android: Compatible con aplicaciones creadas en MIT App Inventor (generalmente Android 5.0 Lollipop o superior).
-
-#### Hardware del tablero
-- **Microcontrolador:** Arduino (ej. UNO, Nano, o compatible) con suficientes pines digitales/analógicos.
-- **Módulo Bluetooth:** HC-05, HC-06 o similar (configurado para comunicación serial).
-- **Memoria RAM 4x4:** Circuito implementado con Flip-Flops tipo D con lógica de direccionamiento y escritura/lectura controlada por el Arduino.
-- **Matriz LED 4x4:** Conectada para reflejar el estado de la RAM de Flip-Flops (LED ON = Bomba).
-- LEDs Indicadores de Estado: 1x Azul (Jugando), 1x Rojo (Game Over), 1x Verde (Ganaste).
-- **Pantalla LCD:** Compatible con Arduino (ej. LCD 16x2 I2C) para mostrar puntaje y mensajes.
-- **Botón Físico:** Pulsador ("Nuevo Juego") conectado a una entrada digital del Arduino.
-- **Fuente de Alimentación:** 5v adecuados para todos los componentes del tablero.
-- 
-### Requisitos de Software
-#### Para la configuración
-- **Python:** Versión 3.8 o superior.
-- **Bibliotecas Python:** pyserial (para comunicación serial), y un microframework web como Flask para el backend.
-- **Navegador Web:** Moderno (Chrome, Firefox, Edge) para interactuar con el Frontend flask.
-- **Arduino IDE:** Versión 1.8.x o 2.x para programar el Arduino.
-- Editor de Código/IDE: VS Code (recomendado), PyCharm, Sublime Text, etc.
-- **Controladores:** Para la comunicación USB-Serial (ej. CH340, FTDI) si son necesarios para el Arduino o adaptador utilizado.
-
-### Para el dispositivo móvil
-- **Aplicación Android:** El archivo .apk compilado desde MIT App Inventor.
-
-### Para el arduino
--El sketch .ino desarrollado en el Arduino IDE.
-
+- Memoria RAM de 1GB 
+- Espacio libre en el disco duro de 2GB
+- Procesador de 1GHz o superior
+- Pantalla
+- Teclado
+- Mouse (opcional)
+### Requisitos de Software 
+- Sistema operativo compatible con python
+- Editor de texto o IDE compatible que permita trabajar con python (se recomienda VScode)
+- Python
 ## Lógica y descripción de la solución
 
 
