@@ -36,41 +36,34 @@
 
 # ÍNDICE  
 
-# Índice  
-
-1. [Introducción](#introducción)  
-2. [Objetivos](#objetivos)  
-   - [Objetivo General](#objetivo-general)  
-   - [Objetivos Específicos](#objetivos-específicos)  
-3. [Descripción del Problema](#descripción-del-problema)  
-4. [Lógica del Sistema](#lógica-del-sistema)  
-5. [Funciones Booleanas y Mapas de Karnaugh](#funciones-booleanas-y-mapas-de-karnaugh)  
-6. [Diagramas de Estado](#diagramas-de-estado)  
-7. [Diagramas con Explicación](#diagramas-con-explicación)  
-8. [Diagramas del Diseño del Circuito](#diagramas-del-diseño-del-circuito)  
-   - [Diagrama del Puente H](#diagrama-del-puente-h)  
-   - [Diagrama Servomotores](#diagrama-servomotores)  
-   - [Diagrama de la Configuración del Teclado](#diagrama-de-la-configuración-del-teclado)  
-   - [Diagrama de los Contadores](#diagrama-de-los-contadores)  
-9. [Diagrama del Circuito Impreso](#diagrama-del-circuito-impreso)  
-10. [Equipo Utilizado](#equipo-utilizado)  
-11. [Presupuesto](#presupuesto)  
-12. [Aporte Individual de Cada Integrante](#aporte-individual-de-cada-integrante)  
-   - [Aporte de Enner Mendizabal](#aporte-de-enner-mendizabal)  
-   - [Aporte de Esteban Sánchez Túchez](#aporte-de-esteban-sánchez-túchez)  
-   - [Aporte de Juan José Sandoval Ruiz](#aporte-de-juan-josé-sandoval-ruiz)  
-   - [Aporte de David Estuardo Barrios Ramírez](#aporte-de-david-estuardo-barrios-ramírez)  
-   - [Aporte de Brandon Antonio Marroquín Pérez](#aporte-de-brandon-antonio-marroquín-pérez)  
-13. [Conclusiones](#conclusiones)  
-14. [Recomendaciones](#recomendaciones)  
-15. [Anexos](#anexos)  
-   - [Aporte de Todos los Integrantes del Grupo](#aporte-de-todos-los-integrantes-del-grupo)  
-   - [Fotografía de los Circuitos Físicos](#fotografía-de-los-circuitos-físicos)  
-16. [Videos del Funcionamiento](#videos-del-funcionamiento)  
-  
+1. [INTRODUCCIÓN](#introducción)
+2. [OBJETIVOS](#objetivos)
+    1. [Objetivo General](#objetivo-general)
+    2. [Objetivos Específicos](#objetivos-específicos)
+3. [DESCRIPCIÓN DEL PROBLEMA](#descripcion-del-problema)
+4. [LÓGICA DEL SISTEMA](#lógica-del-sistema)
+5. [FUNCIONES BOOLEANAS Y MAPAS DE KARNAUGH](#funciones-booleanas-y-mapas-de-karnaugh)
+6. [DIAGRAMAS DE ESTADO](#diagramas-de-estado)
+7. [DIAGRAMAS CON EXPLICACIÓN](#diagramas-con-explicación)
+8. [DIAGRAMAS DEL DISEÑO DEL CIRCUITO](#diagramas-del-diseño-del-circuito)
+9. [DIAGRAMA DEL CIRCUITO IMPRESO](#diagrama-del-circuito-impreso)
+10. [EQUIPO UTILIZADO](#equipo-utilizado)
+11. [PRESUPUESTO](#presupuesto)
+12. [APORTE INDIVIDUAL DE CADA INTEGRANTE](#aporte-individual-de-cada-integrante)
+    - [Enner Mendizabal - 202302220](#enner-mendizabal---202302220)
+    - [Esteban Sánchez Túchez - 202300769](#esteban-sánchez-túchez---202300769)
+    - [Juan José Sandoval Ruiz - 202300710](#juan-josé-sandoval-ruiz--202300710)
+    - [David Estuardo Barrios Ramírez - 202300670](#david-estuardo-barrios-ramírez--202300670)
+    - [Brandon Antonio Marroquín Pérez - 202300813](#brandon-antonio-marroquín-pérez-202300813)
+13. [CONCLUSIONES](#conclusiones)
+14. [RECOMENDACIONES](#recomendaciones)
+15. [ANEXOS](#anexos)
+16. [APORTE DE TODOS LOS INTEGRANTES DEL GRUPO](#aporte-de-todos-los-integrantes-del-grupo)
+17. [FOTOGRAFÍA DE LOS CIRCUITOS FÍSICOS](#fotografía-de-los-circuitos-físicos)
+18. [VIDEOS DEL FUNCIONAMIENTO DE MANERA SEPARADA](#videos-del-funcionamiento-de-manera-separada)
 
 ## INTRODUCCIÓN  
-
+El presente proyecto tiene como finalidad, adentrarnos en la implementación de un juego interactivo basado en el clásico **Buscaminas**. Este prototipo deberá ser funcional mediante circuitos combinacionales y secuenciales, controlado tanto desde una plataforma web (front-end y back-end) como físicamente desde una placa implementada con componentes lógicos y comunicación serial. La experiencia busca reforzar el aprendizaje práctico de memorias RAM con Flip-Flops, comunicación serial y control de flujo de datos, fomentando el trabajo colaborativo mediante un sistema de control de versiones.
 
 
 
@@ -78,14 +71,20 @@
 ## OBJETIVOS  
 
 ## Objetivo General  
+- Aplicar todos los conocimientos adquiridos en el curso sobre lógica combinacional y secuencial en la construcción de un prototipo funcional del juego Buscaminas.
 
 
 ## Objetivos Específicos  
+
+1. Diseñar e implementar circuitos secuenciales y combinacionales que representen la lógica del juego.
+2. Establecer comunicación serial entre el sistema físico (placa y Arduino) y una interfaz web para la configuración y control del juego.
+3. Implementar una memoria RAM de 4x4 utilizando Flip-Flops para almacenar las posiciones de las bombas.
 
 
 
 
 ## Descripcion del Problema
+Se desea incorporar un nuevo juego interactivo en su sistema operativo, y se ha encomendado el diseño de un prototipo del clásico juego Buscaminas. El desafío técnico consiste en implementar esta solución con circuitos lógicos y una arquitectura de dos capas (cliente-servidor), que incluya configuración de bombas mediante una interfaz web, comunicación con una placa a través de Arduino y Bluetooth, y validación del juego mediante señales LED y una pantalla LCD. El diseño debe ser preciso, ya que cualquier error en la integración de los módulos o en la implementación física del circuito impedirá su calificación.
 
 ## Lógica del Sistema
 
@@ -130,30 +129,33 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 
 
 ## PRESUPUESTO  
-
+--------------
 
 
 ## APORTE INDIVIDUAL DE CADA INTEGRANTE  
 
-# Aportaciones del Proyecto
 
 ## Enner Mendizabal - 202302220  
 
-- ## Esteban Sánchez Túchez  
+- ## Esteban Sánchez Túchez - 202300769
 
 
-- ## Juan José Sandoval Ruiz  
+- ## Juan José Sandoval Ruiz  202300710
 
 
-- ## David Estuardo Barrios Ramírez  
+- ## David Estuardo Barrios Ramírez  202300670
 
 
-- ## Brandon Antonio Marroquín Pérez  
+- ## Brandon Antonio Marroquín Pérez 202300813 
 
 
 
 
 ## CONCLUSIONES  
+
+- La implementación del juego Buscaminas a través de circuitos físicos y control serial representa una oportunidad ideal para aplicar de forma tangible los principios de organización computacional.
+- El proyecto permite reforzar habilidades en diseño digital, electrónica, comunicación serial, y gestión colaborativa de software mediante ramas en un repositorio.
+- La correcta integración de hardware y software es clave para lograr un sistema funcional, destacando la importancia de la planificación, el diseño modular y las pruebas integrales.
 
 ## Recomendaciones
 

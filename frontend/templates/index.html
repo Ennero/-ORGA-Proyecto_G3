@@ -7,7 +7,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>💣💣 Buscaminas 💣💣</h1>
+        <h1>
+            <span class="bomba">💣</span> Buscaminas <span class="bomba">💣</span>
+        </h1>
 
         <div class="botones">
             <!-- Botón para iniciar nuevo juego -->
@@ -81,6 +83,19 @@
                 alert("Primero carga un archivo.");
             }
         }
+        document.querySelectorAll('.bomba').forEach(bomba => {
+        bomba.addEventListener('click', () => {
+            // Crear la explosión
+            const explosion = document.createElement('div');
+            explosion.classList.add('explosion');
+            bomba.appendChild(explosion);
+
+            // Eliminar la explosión después de la animación
+            setTimeout(() => {
+                explosion.remove();
+            }, 500);
+        });
+    });
 
     </script>
 </body>
