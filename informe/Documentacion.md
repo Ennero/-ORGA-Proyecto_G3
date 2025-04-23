@@ -122,8 +122,8 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 - **FLIB-FLOP**
 - **Arduino Uno**
 - **Arduino Mega**
-- **Decoders**
-- **Display 7 segmentos**
+- **Modulo Bluetooth**
+- **Display**
 
 
 
@@ -136,18 +136,19 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 
 
 ## Enner Mendizabal - 202302220  
+se encargo de hacer el diseño para el diseño de la memoria ram, ademas de hacer los manuales 
 
 - ## Esteban Sánchez Túchez - 202300769
-
+se encargo de hacer la memoria ram
 
 - ## Juan José Sandoval Ruiz  202300710
-
+hizo la aplicacion con la matriz incluida
 
 - ## David Estuardo Barrios Ramírez  202300670
-
+se encargo del soldado de las cosas ademas de hacer el backend para el juego, configurando la jugabilidad
 
 - ## Brandon Antonio Marroquín Pérez 202300813 
-
+Frontend del sistema
 
 
 
@@ -158,6 +159,21 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 - La correcta integración de hardware y software es clave para lograr un sistema funcional, destacando la importancia de la planificación, el diseño modular y las pruebas integrales.
 
 ## Recomendaciones
+- Implementar la RAM con 16 flip-flops tipo D.
+- Usar decodificadores para seleccionar cada celda.
+- Dividir el sistema en módulos: configuración, juego, estados, comunicación.
+- Simular antes de montar en placa (usar Logisim o Proteus).
+- Crear un front-end web para ubicar bombas y cargar archivos .org.
+- Backend debe enviar datos al Arduino por serial.
+- Verificar el módulo HC-06 antes de integrarlo.
+- Comandos simples: VER <pos>, REINICIO.
+- LED azul: jugando, rojo: game over, verde: ganaste.
+- Validar que no se juegue sin configurar primero.
+- El botón “Nuevo Juego” debe resetear todo.
+- Usar ramas main, develop, feature/<funcionalidad_carnet>.
+- Realizar commits claros y frecuentes.
+- Toda la documentación en formato Markdown.
+- Probar el flujo completo antes de entregar.
 
 ## ANEXOS  
 

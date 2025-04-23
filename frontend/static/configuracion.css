@@ -54,7 +54,9 @@ body::before {
     91% { background-color: rgba(140, 40, 52, 0.6); }
     100% { background-color: rgba(120, 35, 48, 0.6); }
 }
-
+.matriz button.seleccionado {
+    background-color: #ff5050 !important;
+}
 .matriz button {
     width: 60px;
     height: 60px;

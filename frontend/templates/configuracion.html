@@ -30,6 +30,7 @@
     
     <button onclick="window.parent.mostrarTab('principal')">Regresar</button>
     <button onclick="mandarConfiguracion()">mandar configuracion de bombas</button>
+    <button onclick="eliminarSeleccion()">eliminar seleccion de bombas</button>
    
     
 </body>
@@ -45,10 +46,10 @@
             if (seleccionados.includes(valor)) {
                 // Si ya está seleccionado, lo quitamos
                 seleccionados.splice(seleccionados.indexOf(valor), 1);
-                this.style.backgroundColor = ""; // Quita el color de selección
+                this.classList.remove('seleccionado'); // Quita la clase
             } else {
                 seleccionados.push(valor);
-                this.style.backgroundColor = "#ff5050"; // Color para seleccionado
+                this.classList.add('seleccionado'); // Agrega la clase
             }
         });
     });
@@ -61,6 +62,13 @@
             alert("💣💣BOMBAS COLOCADAS EN LAS POSICIONES: " + seleccionados.join(", "));
             // Aquí puedes hacer un fetch o postMessage para enviar la configuración al backend o al padre
         }
+    }
+    
+    function eliminarSeleccion() {
+        seleccionados.length = 0; // Limpiar el array de seleccionados
+        document.querySelectorAll('.matriz button').forEach(btn => {
+            btn.classList.remove('seleccionado'); // Quitar la clase de selección
+        });
     }
 </script>
 </html>
