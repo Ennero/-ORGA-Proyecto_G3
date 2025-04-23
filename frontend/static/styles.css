@@ -23,8 +23,11 @@ body::before {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .botones {
@@ -53,24 +56,44 @@ h1 {
     display: inline-block; /* Ajusta el tamaño del borde al texto */
     /*background-color: rgba(0, 122, 204, 0.8);  Fondo semitransparente */
 }
+.area-texto {
+    width: 850px; /* Ancho del área de texto */
+    height: 200px; /* Alto del área de texto */
+    font-size: 16px;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: bold;
+    resize: none;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: rgba(132, 132, 132, 0.4);
+    color: #000;
+    text-align: left;
+    margin-left: 0; /* Corrige el valor, debe ser 0 o un valor en px */
+}
+
 
 button:hover {
     background-color: #007acc;
 }
-
-.area-texto {
+.contenido-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
     width: 100%;
-    height: 180px;
-    margin-bottom: 20px;
-    padding: 10px;
-    font-size: 16px; /* Aumenta el tamaño del texto */
-    font-family: "Times New Roman", Times, serif; /* Cambia la fuente a Times */
-    font-weight: bold; /* Hace el texto más grueso */
-    resize: none;
-    border: 1px solid #aaa;
-    border-radius: 5px;
-    background-color: rgba(132, 132, 132, 0.4); /* Fondo semitransparente */
-    color: #000; /* Ajusta el color del texto para que sea visible */
+    margin-top: 30px;
+    gap: 40px; /* Espacio entre textareas y matriz */
+}
+
+.textareas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entrada-texto, .salida-texto {
+    position: static !important; /* Quita el absolute para que funcione el flex */
+    margin: 0;
 }
 
 /* Animación para las bombas */
@@ -139,4 +162,49 @@ button:hover {
         opacity: 0;
         transform: scale(2); /* La explosión se agranda */
     }
+}
+
+/* aqui estara la matriz*/
+.matriz {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual tamaño */
+    gap: 10px; /* Espaciado entre los botones */
+    justify-content: center; /* Centra la matriz horizontalmente */
+    margin: 20px auto; /* Espaciado y centrado del contenedor */
+}
+
+/* Animación de cambio de color para los botones de la matriz */
+@keyframes color-change-red {
+    0% { background-color: rgba(220, 53, 69, 0.6); }
+    7% { background-color: rgba(187, 45, 59, 0.6); }
+    14% { background-color: rgba(154, 37, 49, 0.6); }
+    21% { background-color: rgba(121, 29, 39, 0.6); }
+    28% { background-color: rgba(88, 21, 29, 0.6); }
+    35% { background-color: rgba(55, 13, 19, 0.6); }
+    42% { background-color: rgba(22, 5, 9, 0.6); }
+    49% { background-color: rgba(121, 29, 39, 0.6); }
+    56% { background-color: rgba(154, 37, 49, 0.6); }
+    63% { background-color: rgba(187, 45, 59, 0.6); }
+    70% { background-color: rgba(220, 53, 69, 0.6); }
+    77% { background-color: rgba(200, 50, 65, 0.6); }
+    84% { background-color: rgba(170, 45, 58, 0.6); }
+    91% { background-color: rgba(140, 40, 52, 0.6); }
+    100% { background-color: rgba(120, 35, 48, 0.6); }
+  }
+  
+  .matriz button {
+      width: 60px;
+      height: 60px;
+      font-size: 16px;
+      background-color: #4da6ff;
+      border: 1px solid #007acc;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      animation: color-change-red 4s infinite alternate;
+      transition: background-color 0.2s;
+  }
+
+.matriz button:hover {
+    background-color: #007acc; /* Color al pasar el mouse */
 }
