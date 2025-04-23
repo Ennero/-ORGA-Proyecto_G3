@@ -16,5 +16,8 @@ def procesar():
     
     return jsonify({"resultado": resultado})
 
+@app.route("/configuracion", methods=["GET"])
+def configuracion():
+    return render_template("configuracion.html")
 if __name__ == "__main__":
     app.run(debug=True)

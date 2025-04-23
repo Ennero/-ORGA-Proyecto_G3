@@ -4,54 +4,44 @@
     <meta charset="UTF-8">
     <title>Interfaz de Juego</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
 </head>
 <body>
-    <div class="container">
-        <h1>
-            <span class="bomba">💣</span> Buscaminas <span class="bomba">💣</span>
-        </h1>
-
-        <div class="botones">
-            <!-- Botón para iniciar nuevo juego -->
-            <button onclick="nuevoJuego()">Nuevo Juego</button>
-
-            <!-- Botón para cargar el archivo y mandarlo al textarea de entrada -->
-            <button onclick="cargarArchivo()">Cargar Archivo</button>
-
-            <!-- Botón para iniciar el juego -->
-            <button onclick="configurarJuego()">Configurar Juego</button>
-
-            <!-- Botón para iniciar el juego -->
-            <button onclick="iniciarJuego()">Iniciar Juego</button>
-        </div>
-        <div class="contenido-flex">
-            <div class="textareas">
-                <!-- Textarea para mostrar el contenido del archivo -->
-                <textarea readonly id="entradaArchivo" class="area-texto entrada-texto" placeholder="Entrada del archivo..."></textarea>
-                <!-- Textarea para mostrar la salida del juego o procesamiento -->
-                <textarea readonly id="salidaArchivo" class="area-texto salida-texto" placeholder="Salida del archivo..."></textarea>
+    <div id="tab-principal">
+        
+        <div class="container">
+            <h1>
+                <span class="bomba">💣</span> Buscaminas <span class="bomba">💣</span>
+            </h1>
+            <div class="botones">
+                <!-- Botón para iniciar nuevo juego -->
+                <button onclick="nuevoJuego()">Nuevo Juego</button>
+    
+                <!-- Botón para cargar el archivo y mandarlo al textarea de entrada -->
+                <button onclick="cargarArchivo()">Cargar Archivo</button>
+    
+                <!-- Botón para iniciar el juego -->
+                <button onclick="configurarJuego()">Configurar Juego</button>
+    
+                <!-- Botón para iniciar el juego -->
+                <button onclick="iniciarJuego()">Iniciar Juego</button>
+                <button onclick="mostrarTab('principal')">Principal</button>
+                <button onclick="mostrarTab('configuracion')">Configuración</button>
             </div>
-            <div class="matriz">
-                <!-- Matriz 4x4 de botones -->
-                <button>1</button>
-                <button>2</button>
-                <button>3</button>
-                <button>4</button>
-                <button>5</button>
-                <button>6</button>
-                <button>7</button>
-                <button>8</button>
-                <button>9</button>
-                <button>10</button>
-                <button>11</button>
-                <button>12</button>
-                <button>13</button>
-                <button>14</button>
-                <button>15</button>
-                <button>16</button>
+            <div class="contenido-flex">
+                <div class="textareas">
+                    <!-- Textarea para mostrar el contenido del archivo -->
+                    <textarea readonly id="entradaArchivo" class="area-texto entrada-texto" placeholder="Entrada del archivo..."></textarea>
+                    <!-- Textarea para mostrar la salida del juego o procesamiento -->
+                    <textarea readonly id="salidaArchivo" class="area-texto salida-texto" placeholder="Salida del archivo..."></textarea>
+                </div>
             </div>
         </div>
     </div>
+    <div id="tab-configuracion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1000;">
+        <iframe src="{{ url_for('configuracion') }}" style="border:none; width:100vw; height:100vh;"></iframe>
+    </div>
+    
 
     <script>
         // Función para cargar el archivo
@@ -121,13 +111,11 @@
             }, 500);
         });
     });
-    // este sera el mensaje de que la bomba se coloca ahi voz 28 si lo eliminas
 
-    document.querySelectorAll('.matriz button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            alert('💣💣bomba colocada💣💣');
-        });
-    });
+    function mostrarTab(tab) {
+    document.getElementById('tab-principal').style.display = tab === 'principal' ? 'block' : 'none';
+    document.getElementById('tab-configuracion').style.display = tab === 'configuracion' ? 'block' : 'none';
+}
 
     </script>
 </body>

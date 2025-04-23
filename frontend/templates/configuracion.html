@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='configuracion.css') }}">
+    <title>modo configuracion </title>
+<body>
+    <div class="container">
+        <div class="matriz">
+            <!-- Matriz 4x4 de botones -->
+            <button onclick="">1</button>
+            <button onclick="" >2</button>
+            <button onclick="">3</button>
+            <button onclick="">4</button>
+            <button onclick="">5</button>
+            <button onclick="">6</button>
+            <button onclick="">7</button>
+            <button onclick="">8</button>
+            <button onclick="">9</button>
+            <button onclick="">10</button>
+            <button onclick="">11</button>
+            <button onclick="">12</button>
+            <button onclick="">13</button>
+            <button onclick="">14</button>
+            <button onclick="">15</button>
+            <button onclick="">16</button>
+        </div>
+    </div>
+    
+    <button onclick="window.parent.mostrarTab('principal')">Regresar</button>
+    <button onclick="mandarConfiguracion()">mandar configuracion de bombas</button>
+   
+    
+</body>
+<script>
+    // Array para guardar los botones seleccionados
+    const seleccionados = [];
+
+    // Selecciona todos los botones de la matriz
+    document.querySelectorAll('.matriz button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const valor = this.textContent;
+            // Alternar selección
+            if (seleccionados.includes(valor)) {
+                // Si ya está seleccionado, lo quitamos
+                seleccionados.splice(seleccionados.indexOf(valor), 1);
+                this.style.backgroundColor = ""; // Quita el color de selección
+            } else {
+                seleccionados.push(valor);
+                this.style.backgroundColor = "#ff5050"; // Color para seleccionado
+            }
+        });
+    });
+
+    // Función para mandar la configuración
+    function mandarConfiguracion() {
+        if (seleccionados.length === 0) {
+            alert("No has seleccionado ningún botón.");
+        } else {
+            alert("💣💣BOMBAS COLOCADAS EN LAS POSICIONES: " + seleccionados.join(", "));
+            // Aquí puedes hacer un fetch o postMessage para enviar la configuración al backend o al padre
+        }
+    }
+</script>
+</html>
