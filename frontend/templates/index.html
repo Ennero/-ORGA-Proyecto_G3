@@ -19,6 +19,9 @@
             <button onclick="cargarArchivo()">Cargar Archivo</button>
 
             <!-- Botón para iniciar el juego -->
+            <button onclick="configurarJuego()">Configurar Juego</button>
+
+            <!-- Botón para iniciar el juego -->
             <button onclick="iniciarJuego()">Iniciar Juego</button>
         </div>
 
@@ -62,15 +65,16 @@
         }
 
         // Función para manejar la lógica de iniciar el juego
-        function iniciarJuego() {
+        function configurarJuego() {
             const contenido = document.getElementById('entradaArchivo').value;
+            console.log("Contenido del archivo:", contenido); // Para depuración
             if (contenido) {
-                fetch("/procesar", {
+                fetch("http://localhost:3000/procesar", { // URL del backend
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ texto: contenido })
+                    body: JSON.stringify({ content: contenido }) // Enviamos el contenido del textarea
                 })
                 .then(response => response.json())
                 .then(data => {
