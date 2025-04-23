@@ -29,8 +29,8 @@
     </div>
     
     <button onclick="window.parent.mostrarTab('principal')">Regresar</button>
-    <button onclick="mandarConfiguracion()">mandar configuracion de bombas</button>
-    <button onclick="eliminarSeleccion()">eliminar seleccion de bombas</button>
+    <button onclick="mandarConfiguracion()">Mandar configuracion de bombas</button>
+    <button onclick="eliminarSeleccion()">Eliminar seleccion de bombas</button>
    
     
 </body>
@@ -53,22 +53,47 @@
             }
         });
     });
-
-    // Función para mandar la configuración
-    function mandarConfiguracion() {
-        if (seleccionados.length === 0) {
-            alert("No has seleccionado ningún botón.");
-        } else {
-            alert("💣💣BOMBAS COLOCADAS EN LAS POSICIONES: " + seleccionados.join(", "));
-            // Aquí puedes hacer un fetch o postMessage para enviar la configuración al backend o al padre
-        }
-    }
     
     function eliminarSeleccion() {
         seleccionados.length = 0; // Limpiar el array de seleccionados
         document.querySelectorAll('.matriz button').forEach(btn => {
             btn.classList.remove('seleccionado'); // Quitar la clase de selección
         });
+    }
+
+    // Función para mandar la configuración
+    function mandarConfiguracion() {
+        if (seleccionados.length === 0) {
+            alert("No has seleccionado ningún botón.");
+        } else {
+            // Crear el texto en el formato solicitado
+            let texto = "";
+            seleccionados.forEach(valor => {
+                const posicion = parseInt(valor) - 1; // Convertir el valor a índice (0 basado)
+                const x = (posicion % 4) + 1; // Calcular la columna (x)
+                const y = Math.floor(posicion / 4) + 1; // Calcular la fila (y)
+                texto += `ADD x: ${x}, y: ${y}\n`; // Agregar al texto
+            });
+
+            // Mostrar el texto generado (opcional)
+            console.log("Texto generado:\n", texto);
+
+            // Enviar el texto al backend
+            fetch("http://localhost:3000/procesar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: texto }) // Enviar el texto generado
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Respuesta del backend: " + data.resultado); // Mostrar la respuesta del backend
+            })
+            .catch(error => {
+                console.error("Error al enviar la configuración:", error);
+            });
+        }
     }
 </script>
 </html>
