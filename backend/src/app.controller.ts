@@ -14,4 +14,9 @@ export class AppController {
   procesarTexto(@Body('content') bombas: string) {
     return this.appService.procesarTexto(bombas);
   }
+
+  @Post('ajustar-modo')
+  ajustarModo(@Body('mode') mode: string) {
+    this.appService.ajustarModo(mode);
+  }
 }

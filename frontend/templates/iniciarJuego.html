@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='nuevoJuego.css') }}">
+    <title>modo configuracion </title>
+<body>
+    <div class="container">
+        <div>
+            <img src="{{ url_for('static', filename='img/ModoJuego.png') }}" alt="Logo" class="logo"></img>
+        </div>
+        <div class="matriz">
+            <!-- Matriz 4x4 de botones -->
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="1"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="2"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="3"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="4"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="5"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="6"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="7"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="8"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="9"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="10"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="11"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="12"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="13"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="14"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="15"></button>
+            <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="16"></button>
+        </div>
+    </div>
+    
+    <button onclick="window.parent.mostrarTab('principal')">Regresar</button>
+    <button onclick="mandarConfiguracion()">Mandar configuracion de bombas</button>
+    <button onclick="eliminarSeleccion()">Eliminar seleccion de bombas</button>
+</body>
+<script>
+    // Array para guardar los botones seleccionados por el usuario
+    const seleccionadosArduino = [];
+
+    // Recuperar las posiciones de las bombas desde localStorage
+    const posicionesBombas = JSON.parse(localStorage.getItem('posicionesBombas')) || [];
+
+    // Inicializar la matriz con la imagen de pared
+    function inicializarMatriz() {
+        document.querySelectorAll('.matriz button').forEach((btn, index) => {
+            const posicion = (index + 1).toString(); // Convertir índice a posición (1 basado)
+            btn.querySelector('img').src = "{{ url_for('static', filename='img/pared.png') }}"; // Imagen por defecto
+            btn.dataset.posicion = posicion; // Guardar la posición en un atributo personalizado
+        });
+    }
+
+    // Manejar el clic en los botones
+    document.querySelectorAll('.matriz button').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const posicion = this.dataset.posicion; // Obtener la posición del botón
+
+            // Alternar selección en la lista seleccionadosArduino
+            if (seleccionadosArduino.includes(posicion)) {
+                // Si ya está seleccionado, lo quitamos
+                seleccionadosArduino.splice(seleccionadosArduino.indexOf(posicion), 1);
+                this.classList.remove('seleccionado'); // Quita la clase
+                this.querySelector('img').src = "{{ url_for('static', filename='img/pared.png') }}"; // Volver a la imagen de pared
+            } else {
+                seleccionadosArduino.push(posicion);
+                this.classList.add('seleccionado'); // Agrega la clase
+
+                console.log("Posiciones seleccionadas:", seleccionadosArduino); // Para depuración
+                console.log("Posiciones de bombas:", posicionesBombas); // Para depuración
+
+                // Cambiar la imagen dependiendo de si es una bomba o un teclado
+                if (posicionesBombas.includes(posicion)) {
+                    this.querySelector('img').src = "{{ url_for('static', filename='img/bomba.png') }}"; // Imagen de bomba
+                } else {
+                    this.querySelector('img').src = "{{ url_for('static', filename='img/hongo.png') }}"; // Imagen de teclado
+                }
+            }
+        });
+    });
+
+    // Inicializar la matriz al cargar la página
+    inicializarMatriz();
+</script>
+</html>

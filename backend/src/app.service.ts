@@ -7,7 +7,7 @@ export class AppService {
 
   constructor() {
     this.puertoSerial = new SerialPort({
-      path: 'COM6', // Asegúrate de que sea el correcto
+      path: 'COM2', // Asegúrate de que sea el correcto
       baudRate: 9600,
     });   
 
@@ -22,6 +22,24 @@ export class AppService {
 
   getHello(): string {
     return 'Hello World!';
+  }
+
+  ajustarModo(texto: string): void {
+    try {
+      // Convertir el texto a un Buffer
+      const bytes = Buffer.from(texto, 'utf-8');
+  
+      // Enviar los bytes al puerto serial
+      this.puertoSerial.write(bytes, (err) => {
+        if (err) {
+          console.error("Error al escribir en el puerto serial:", err.message);
+        } else {
+          console.log(`Modo "${texto}" enviado correctamente al puerto serial.`);
+        }
+      });
+    } catch (error) {
+      console.error("Error al ajustar el modo:", error.message);
+    }
   }
 
   procesarTexto(texto: string): { resultado: string } {

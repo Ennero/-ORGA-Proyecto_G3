@@ -1,0 +1,95 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('./img/bom2.jpg'); /* Imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+body::before {
+    content: "";
+    position: fixed; /* Cambiado a fixed para cubrir toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Oscurece la imagen */
+    z-index: -1; /* Coloca la capa detrás del contenido */
+}
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+.matriz {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual tamaño */
+    gap: 10px; /* Espaciado entre los botones */
+    justify-content: center; /* Centra la matriz horizontalmente */
+    margin: 20px auto; /* Espaciado y centrado del contenedor */
+}
+
+
+.matriz button {
+    width: 60px; /* Ancho del botón */
+    height: 60px; /* Alto del botón */
+    background-color: transparent; /* Fondo transparente para mostrar solo la imagen */
+    /*border: 1px solid #007acc;*/
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 0; /* Elimina el padding para que la imagen ocupe todo el botón */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.matriz button img {
+    width: 100%; /* La imagen ocupará todo el ancho del botón */
+    height: 100%; /* La imagen ocupará todo el alto del botón */
+    object-fit: contain; /* Ajusta la imagen dentro del botón sin distorsionarla */
+    border-radius: 5px; /* Opcional: redondea las esquinas de la imagen */
+}
+
+.matriz button:hover {
+    background-color: #007acc; /* Color al pasar el mouse */
+}
+.botones {
+    margin-bottom: 20px;
+    border: #e9f2fd;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+button {
+    background-color: #4da6ff;
+    border: 1px solid rgba(210, 107, 17, 0.838);
+    color: white;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logo {
+    width: 600px; /* Ajusta el ancho del logo */
+    height: 200px; /* Mantén la proporción de la imagen */
+    margin: 20px auto; /* Centra el logo horizontalmente */
+    display: block; /* Asegura que se comporte como un bloque */
+    /*border: 3px solid #007acc;  Borde alrededor del logo */
+    border-radius: 10px; /* Bordes redondeados */
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */ /* Sombra para darle profundidad */
+    padding: 5px; /* Espaciado interno */
+    transition: transform 0.3s, box-shadow 0.3s; /* Animación al pasar el mouse */
+}
+
+.logo:hover {
+    transform: scale(1.1); /* Aumenta ligeramente el tamaño al pasar el mouse */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Aumenta la sombra al pasar el mouse */
+}

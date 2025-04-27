@@ -66,6 +66,9 @@
         if (seleccionados.length === 0) {
             alert("No has seleccionado ningún botón.");
         } else {
+            // Guardar la lista de seleccionados en localStorage
+            localStorage.setItem('posicionesBombas', JSON.stringify(seleccionados));
+
             // Crear el texto en el formato solicitado
             let texto = "";
             seleccionados.forEach(valor => {

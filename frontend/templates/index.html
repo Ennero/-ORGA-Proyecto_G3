@@ -24,8 +24,7 @@
                 <button onclick="configurarJuego()">Configurar Juego</button>
     
                 <!-- Botón para iniciar el juego -->
-                <button onclick="iniciarJuego()">Iniciar Juego</button>
-                <button onclick="mostrarTab('principal')">Principal</button>
+                <button onclick="mostrarTab('iniciarJuego')">Iniciar Juego</button>
                 <button onclick="mostrarTab('configuracion')">Configuración</button>
             </div>
             <div class="contenido-flex">
@@ -41,11 +40,25 @@
     <div id="tab-configuracion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1000;">
         <iframe src="{{ url_for('configuracion') }}" style="border:none; width:100vw; height:100vh;"></iframe>
     </div>
+    <div id="tab-iniciarJuego" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1000;">
+        <iframe src="{{ url_for('iniciar_juego') }}" style="border:none; width:100vw; height:100vh;"></iframe>
+    </div>
     
 
     <script>
         // Función para cargar el archivo
         function cargarArchivo() {
+
+            fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mode: "setUp" }) // Enviamos el contenido del textarea
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
             // Crear un input oculto para seleccionar el archivo
             const inputArchivo = document.createElement('input');
             inputArchivo.type = 'file';
@@ -74,7 +87,7 @@
             document.getElementById('salidaArchivo').value = ''; // Limpiar textarea de salida
             alert("Nuevo juego iniciado.");
         }
-
+        
         // Función para manejar la lógica de iniciar el juego
         function configurarJuego() {
             const contenido = document.getElementById('entradaArchivo').value;
@@ -113,9 +126,36 @@
     });
 
     function mostrarTab(tab) {
-    document.getElementById('tab-principal').style.display = tab === 'principal' ? 'block' : 'none';
-    document.getElementById('tab-configuracion').style.display = tab === 'configuracion' ? 'block' : 'none';
-}
+        document.getElementById('tab-principal').style.display = tab === 'principal' ? 'block' : 'none';
+        document.getElementById('tab-configuracion').style.display = tab === 'configuracion' ? 'block' : 'none';
+        document.getElementById('tab-iniciarJuego').style.display = tab === 'iniciarJuego' ? 'block' : 'none';
+    
+        // Llamar a ajustarModo si se cambia a la pestaña de configuración
+        if (tab === 'configuracion') {
+            fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mode: "configuration" }) // Enviamos el modo
+            })
+            .catch(error => {
+                console.error("Error al ajustar el modo:", error);
+            });
+        } else if (tab === 'iniciarJuego') {
+            fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mode: "game" }) // Enviamos el modo
+            })
+            .catch(error => {
+                console.error("Error al ajustar el modo:", error);
+            });
+        }
+    }
+    
 
     </script>
 </body>
