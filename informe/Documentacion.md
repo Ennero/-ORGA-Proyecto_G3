@@ -87,8 +87,97 @@ El presente proyecto tiene como finalidad, adentrarnos en la implementación de 
 Se desea incorporar un nuevo juego interactivo en su sistema operativo, y se ha encomendado el diseño de un prototipo del clásico juego Buscaminas. El desafío técnico consiste en implementar esta solución con circuitos lógicos y una arquitectura de dos capas (cliente-servidor), que incluya configuración de bombas mediante una interfaz web, comunicación con una placa a través de Arduino y Bluetooth, y validación del juego mediante señales LED y una pantalla LCD. El diseño debe ser preciso, ya que cualquier error en la integración de los módulos o en la implementación física del circuito impedirá su calificación.
 
 ## Lógica del Sistema
+## 🛠 Configuración del Juego
+Inicialización de la RAM:
 
-## Funciones Booleanas y Mapas de Karnaugh
+El tablero de juego está representado por una memoria RAM 4x4 implementada físicamente con flip-flops.
+
+La RAM debe ser configurada al inicio enviando datos a través de comunicación serial desde un frontend en una computadora.
+
+El usuario puede configurar las bombas de dos formas:
+
+Desde un archivo .org con las posiciones.
+
+Desde una interfaz gráfica (pagina web).
+
+Comunicación Serial:
+
+Un backend recibe las instrucciones desde el frontend y envía los comandos hacia un Arduino conectado al circuito físico.
+
+El Arduino interpreta los datos y coloca las bombas en las posiciones indicadas.
+
+Indicación de Bombas:
+
+Cada celda de la RAM tiene un LED asociado:
+
+Encendido si hay bomba en esa posición.
+
+Apagado si no hay bomba.
+
+## 🎮 Modo de Juego
+Inicio de la Partida:
+
+El juego inicia con el estado "Jugando", encendiendo un LED azul.
+
+Selección de Casillas:
+
+El jugador, usando su celular por Bluetooth (módulo HC-06), envía la posición que quiere verificar (entre 1 y 16).
+
+El Arduino recibe la posición, consulta la RAM, y determina:
+
+Si es bomba:
+
+Se muestra "Game Over" en una pantalla LCD.
+
+Se enciende el LED rojo de "Fin del juego".
+
+El juego termina hasta reiniciar.
+
+Si NO es bomba:
+
+Se marca la posición como descubierta.
+
+Se incrementa el puntaje en 1 y se actualiza en la LCD.
+
+Victoria:
+
+Si el jugador descubre todas las casillas sin bombas, se muestra "Ganaste" en la pantalla LCD y se enciende el LED verde.
+
+Reinicio:
+
+Para reiniciar, el usuario debe enviar el comando "reinicio" vía Bluetooth, lo que:
+
+Resetea el tablero.
+
+Apaga los LEDs de victoria o game over.
+
+Vuelve al estado de configuración inicial.
+
+## ⚙ Estados del Juego (Control de LEDs)
+Jugando → LED azul encendido.
+
+Game Over → LED rojo encendido.
+
+Ganaste → LED verde encendido.
+
+Los estados son mutuamente excluyentes: solo un LED puede estar activo a la vez.
+
+## 🖥 Comunicación General
+Frontend: Página web que permite:
+
+Configurar bombas (manual o por archivo).
+
+Backend:
+
+Recibe configuración del frontend.
+
+Envía datos al Arduino por serial.
+
+Arduino:
+
+Controla la RAM física.
+
+Procesa las jugadas enviadas desde el celular vía Bluetooth.
 
 ## Diagramas de Estado
 
@@ -120,10 +209,9 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 - **Ttermocogible**
 - **Cables Dupont**
 - **FLIB-FLOP**
-- **Arduino Uno**
 - **Arduino Mega**
 - **Modulo Bluetooth**
-- **Display**
+- **Pantalla LCD de 16x2**
 
 
 
@@ -135,20 +223,21 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 ## APORTE INDIVIDUAL DE CADA INTEGRANTE  
 
 
-## Enner Mendizabal - 202302220  
-se encargo de hacer el diseño para el diseño de la memoria ram, ademas de hacer los manuales 
+## Enner Mendizábal - 202302220
+Se desempeñó como coordinador general del grupo, liderando y organizando las actividades en todo momento para asegurar el cumplimiento de los objetivos propuestos. Fue responsable del diseño y construcción de la memoria RAM, tanto en el entorno de simulación (Proteus) como en el montaje físico. Asimismo, llevó a cabo el proceso de soldadura de la placa de la RAM, garantizando su correcto ensamblaje y funcionamiento. Además, elaboró tanto el manual técnico como el manual de usuario del proyecto, proporcionando documentación clara y detallada para el manejo y comprensión del sistema desarrollado.
 
-- ## Esteban Sánchez Túchez - 202300769
-se encargo de hacer la memoria ram
+## Esteban Sánchez Túchez - 202300769
+Se encargó de establecer y configurar la comunicación entre la matriz de LEDs y el Arduino, tanto en el entorno de simulación (Proteus) como en el hardware físico. También colaboró activamente en el proceso de instalación de la RAM y participó en el desarrollo de la estructura del backend del proyecto, aportando soluciones prácticas y eficientes para la correcta funcionalidad del sistema.
 
-- ## Juan José Sandoval Ruiz  202300710
-hizo la aplicacion con la matriz incluida
+## Juan José Sandoval Ruiz - 202300710
+Tuvo a su cargo la creación y diseño de la maqueta física del proyecto, destacándose por su creatividad al lograr una presentación dinámica y estéticamente atractiva. Además, fue responsable de establecer la conexión entre el dispositivo móvil y la aplicación mediante tecnología Bluetooth, facilitando la interacción entre el usuario y el sistema de manera eficiente.
 
-- ## David Estuardo Barrios Ramírez  202300670
-se encargo del soldado de las cosas ademas de hacer el backend para el juego, configurando la jugabilidad
+## David Estuardo Barrios Ramírez - 202300670
+Se responsabilizó de desarrollar la lógica de jugabilidad en el backend del sistema, asegurando una experiencia de usuario fluida y funcional. Asimismo, trabajó en el diseño de la pantalla de "Nuevo Juego" en el frontend, cuidando aspectos visuales y de usabilidad para mejorar la interfaz gráfica del proyecto.
 
-- ## Brandon Antonio Marroquín Pérez 202300813 
-Frontend del sistema
+## Brandon Antonio Marroquín Pérez - 202300813
+Administró de manera eficiente el presupuesto asignado al grupo, garantizando una correcta distribución de los recursos materiales y financieros necesarios para cada etapa del proyecto. Elaboró el informe final del grupo, documentando detalladamente los procesos, avances y resultados obtenidos. También contribuyó activamente en el desarrollo del frontend del proyecto, en especial en las secciones relacionadas con la jugabilidad en HTML. Además, asumió la responsabilidad total del proceso de fabricación de las placas, incluyendo el planchado, la inmersión en ácido, el pulido y el acabado final, asegurando un trabajo de alta precisión, calidad y presentación estética.
+
 
 
 
@@ -180,10 +269,15 @@ Frontend del sistema
 
 ## APORTE DE TODOS LOS INTEGRANTES DEL GRUPO  
 
+![alt text](image.png)
 
+![alt text](image-1.png)
 
+![alt text](image-2.png)
 
+![alt text](image-3.png)
 
+![alt text](image-4.png)
 
 ## FOTOGRAFÍA DE LOS CIRCUITOS FÍSICOS  
 
@@ -197,8 +291,8 @@ Frontend del sistema
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="container text-center mt-5">
-    <h5>Video 1: -------------------</h5>
-    <a href="----------" 
+    <h5>Video 1: Prueba de la ram en Proteus</h5>
+    <a href="https://drive.google.com/file/d/1MYDP4kPjVaeLNfP_WM1HMH3yRQsBn5o6/view?usp=sharing" 
        target="_blank" 
        class="btn btn-primary btn-lg shadow-lg">
         🎥 Ver Video
