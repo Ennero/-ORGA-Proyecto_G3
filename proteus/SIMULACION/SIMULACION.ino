@@ -69,8 +69,13 @@
               break;
             } else if (Serial.available() >= 1) {
             String text = Serial.readString();
-            int num = text.toInt();
-    
+            int num = text.toInt() - 1;
+
+            if (num > 15 || num <= 0) {
+              Serial.println("Numero de posicion invalida.");
+              continue;
+            }
+            
             int row = num / 4;
             int column = num % 4;
       
@@ -83,6 +88,7 @@
               Serial.print(" columna: ");
               Serial.println(column +1 );
               Serial.println("---- ¡Perdiste! ----");
+              Serial.println("Salida del modo juego.");
               mode = "";
               turnOnLooseLed();
               break;
@@ -99,6 +105,7 @@
     
           if(verified_pos >= pos_whitout_bombs) {
             Serial.println("---- ¡Ganaste! ----");
+            Serial.println("Salida del modo juego.");
             mode = "";
             break;
           }

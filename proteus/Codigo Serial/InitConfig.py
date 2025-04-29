@@ -2,7 +2,7 @@ import os
 import serial
 import time
 
-serialPort = serial.Serial("COM3", 9600)
+serialPort = serial.Serial("COM2", 9600)
 time.sleep(2)
 
 
@@ -12,8 +12,8 @@ def serialTest():
         inputText = input("Seleccionar modo: ")
 
         if inputText == "configuration":
-            # time.sleep(1)
-            # serialPort.write(inputText.encode())
+            time.sleep(1)
+            serialPort.write(inputText.encode())
 
             while True:
                 inputText = input("Desea enviar las bombas a la RAM? ")
