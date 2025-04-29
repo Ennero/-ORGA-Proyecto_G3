@@ -36,7 +36,7 @@
         Serial.println("==== MODO CONFIGURACION ====");
         turnOnconfigLed();
         while(true) {
-          
+            
             if (Serial.peek() == 'X') {
               Serial.read();
               Serial.println("Salida del modo configuracion.");
