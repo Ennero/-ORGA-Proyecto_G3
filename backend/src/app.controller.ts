@@ -19,4 +19,9 @@ export class AppController {
   ajustarModo(@Body('mode') mode: string) {
     this.appService.ajustarModo(mode);
   }
+
+  @Post('/enviar-numero')
+  enviarNumero(@Body('numero') numero: any) {
+    this.appService.enviarNumero(numero);
+  }
 }

@@ -29,11 +29,18 @@
             <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="15"></button>
             <button onclick=""><img src="{{ url_for('static', filename='img/pared.png') }}" alt="16"></button>
         </div>
+        <div id="gameOverModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <img src="{{ url_for('static', filename='img/GameOver.png') }}" alt="Game Over" class="game-over-img">
+                <div class="modal-buttons">
+                    <button onclick="enviarX(); reiniciarJuego()">Reiniciar Juego</button>
+                    <button onclick="enviarX(); irMenuPrincipal()">Menú Principal</button>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <button onclick="window.parent.mostrarTab('principal')">Regresar</button>
-    <button onclick="mandarConfiguracion()">Mandar configuracion de bombas</button>
-    <button onclick="eliminarSeleccion()">Eliminar seleccion de bombas</button>
+    <button onclick="enviarX(); window.parent.mostrarTab('principal')">Regresar</button>
 </body>
 <script>
     // Array para guardar los botones seleccionados por el usuario
@@ -41,6 +48,20 @@
 
     // Recuperar las posiciones de las bombas desde localStorage
     const posicionesBombas = JSON.parse(localStorage.getItem('posicionesBombas')) || [];
+
+    function enviarX(){
+        // Llamar al backend para ajustar el modo a "configuracion"
+        fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mode: "X" }) // Enviamos el modo
+        })
+        .catch(error => {
+            console.error("Error al ajustar el modo:", error);
+        });
+    }
 
     // Inicializar la matriz con la imagen de pared
     function inicializarMatriz() {
@@ -51,11 +72,41 @@
         });
     }
 
-    // Manejar el clic en los botones
+    // Función para mostrar el modal de Game Over
+    function mostrarGameOver() {
+        const modal = document.getElementById('gameOverModal');
+        modal.style.display = 'flex'; // Mostrar el modal
+    }
+
+    // Función para reiniciar el juego
+    function reiniciarJuego() {
+        location.reload(); // Recargar la página para reiniciar el juego
+    }
+
+    // Función para ir al menú principal
+    function irMenuPrincipal() {
+        window.parent.mostrarTab('principal'); // Cambiar a la pestaña principal
+    }
+
+    async function enviarPosicion(posicion) {
+        try {
+            // Esperar a que se complete la solicitud al endpoint de procesar
+            const response = await fetch("http://localhost:3000/enviar-numero", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ numero: posicion }) // Enviamos la posición
+            });
+        } catch (error) {
+            console.error("Error al procesar la posición:", error);
+        }
+    }
+
     document.querySelectorAll('.matriz button').forEach(btn => {
         btn.addEventListener('click', function () {
             const posicion = this.dataset.posicion; // Obtener la posición del botón
-
+    
             // Alternar selección en la lista seleccionadosArduino
             if (seleccionadosArduino.includes(posicion)) {
                 // Si ya está seleccionado, lo quitamos
@@ -65,13 +116,15 @@
             } else {
                 seleccionadosArduino.push(posicion);
                 this.classList.add('seleccionado'); // Agrega la clase
-
+    
                 console.log("Posiciones seleccionadas:", seleccionadosArduino); // Para depuración
                 console.log("Posiciones de bombas:", posicionesBombas); // Para depuración
-
-                // Cambiar la imagen dependiendo de si es una bomba o un teclado
+    
+                // Cambiar la imagen dependiendo de si es una bomba o un hongo
                 if (posicionesBombas.includes(posicion)) {
                     this.querySelector('img').src = "{{ url_for('static', filename='img/bomba.png') }}"; // Imagen de bomba
+                    enviarPosicion(posicion); // Enviar la posición al backend
+                    mostrarGameOver(); // Mostrar el modal de Game Over
                 } else {
                     this.querySelector('img').src = "{{ url_for('static', filename='img/hongo.png') }}"; // Imagen de teclado
                 }

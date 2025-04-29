@@ -42,6 +42,24 @@ export class AppService {
     }
   }
 
+  enviarNumero(numero: string): void {
+    try {
+      // Convertir el string a un Buffer
+      const buffer = Buffer.from(numero, 'utf-8');
+  
+      // Enviar el string al puerto serial
+      this.puertoSerial.write(buffer, (err) => {
+        if (err) {
+          console.error("Error al escribir en el puerto serial:", err.message);
+        } else {
+          console.log(`String "${numero}" enviado correctamente al puerto serial.`);
+        }
+      });
+    } catch (error) {
+      console.error("Error al enviar el string:", error.message);
+    }
+  }
+
   procesarTexto(texto: string): { resultado: string } {
     const bytes = configToBytes(texto);
     const bin_str = bytes[1].toString(2).padStart(8, '0') + bytes[0].toString(2).padStart(8, '0');
