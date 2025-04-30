@@ -46,6 +46,14 @@
     
 
     <script>
+
+        // Función para manejar el inicio de un nuevo juego
+        function nuevoJuego() {
+            document.getElementById('entradaArchivo').value = ''; // Limpiar textarea de entrada
+            document.getElementById('salidaArchivo').value = ''; // Limpiar textarea de salida
+            alert("Nuevo juego iniciado.");
+        }
+        
         // Función para cargar el archivo
         function cargarArchivo() {
 
