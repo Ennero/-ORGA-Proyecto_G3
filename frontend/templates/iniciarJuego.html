@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='nuevoJuego.css') }}">
     <title>modo configuracion </title>
+
 <body>
     <div class="container">
         <div>
@@ -33,13 +35,13 @@
             <div class="modal-content">
                 <img src="{{ url_for('static', filename='img/GameOver.png') }}" alt="Game Over" class="game-over-img">
                 <div class="modal-buttons">
-                    <button onclick="enviarX(); reiniciarJuego()">Reiniciar Juego</button>
+                    <button onclick="enviarGame(); reiniciarJuego()">Reiniciar Juego</button>
                     <button onclick="enviarX(); irMenuPrincipal()">Menú Principal</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <button onclick="enviarX(); window.parent.mostrarTab('principal')">Regresar</button>
 </body>
 <script>
@@ -49,7 +51,21 @@
     // Recuperar las posiciones de las bombas desde localStorage
     const posicionesBombas = JSON.parse(localStorage.getItem('posicionesBombas')) || [];
 
-    function enviarX(){
+    function enviarGame() {
+        // Llamar al backend para ajustar el modo a "configuracion"
+        fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mode: "game" }) // Enviamos el modo
+        })
+            .catch(error => {
+                console.error("Error al ajustar el modo:", error);
+            });
+    }
+
+    function enviarX() {
         // Llamar al backend para ajustar el modo a "configuracion"
         fetch("http://localhost:3000/ajustar-modo", { // URL del backend
             method: "POST",
@@ -58,9 +74,9 @@
             },
             body: JSON.stringify({ mode: "X" }) // Enviamos el modo
         })
-        .catch(error => {
-            console.error("Error al ajustar el modo:", error);
-        });
+            .catch(error => {
+                console.error("Error al ajustar el modo:", error);
+            });
     }
 
     // Inicializar la matriz con la imagen de pared
@@ -106,7 +122,7 @@
     document.querySelectorAll('.matriz button').forEach(btn => {
         btn.addEventListener('click', function () {
             const posicion = this.dataset.posicion; // Obtener la posición del botón
-    
+
             // Alternar selección en la lista seleccionadosArduino
             if (seleccionadosArduino.includes(posicion)) {
                 // Si ya está seleccionado, lo quitamos
@@ -116,10 +132,10 @@
             } else {
                 seleccionadosArduino.push(posicion);
                 this.classList.add('seleccionado'); // Agrega la clase
-    
+
                 console.log("Posiciones seleccionadas:", seleccionadosArduino); // Para depuración
                 console.log("Posiciones de bombas:", posicionesBombas); // Para depuración
-    
+
                 // Cambiar la imagen dependiendo de si es una bomba o un hongo
                 if (posicionesBombas.includes(posicion)) {
                     this.querySelector('img').src = "{{ url_for('static', filename='img/bomba.png') }}"; // Imagen de bomba
@@ -135,4 +151,5 @@
     // Inicializar la matriz al cargar la página
     inicializarMatriz();
 </script>
+
 </html>
