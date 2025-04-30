@@ -142,6 +142,7 @@
                     enviarPosicion(posicion); // Enviar la posición al backend
                     mostrarGameOver(); // Mostrar el modal de Game Over
                 } else {
+                    enviarPosicion(posicion); // Enviar la posición al backend
                     this.querySelector('img').src = "{{ url_for('static', filename='img/hongo.png') }}"; // Imagen de teclado
                 }
             }
