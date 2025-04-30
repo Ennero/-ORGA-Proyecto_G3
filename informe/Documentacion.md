@@ -184,9 +184,14 @@ Procesa las jugadas enviadas desde el celular vía Bluetooth.
 
 ## Diagramas con Explicación
 
+
+
 ## Diagramas del Diseño del Circuito
 
+![alt text](image-5.png)
+
 ## DIAGRAMA DEL CIRCUITO IMPRESO  
+
 
 
 
