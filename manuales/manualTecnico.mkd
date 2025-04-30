@@ -34,10 +34,221 @@ Este manual cubre los aspectos técnicos de la implementación del proyecto Busc
 - Python
 ## Lógica y descripción de la solución
 
+### Logica del frontend
+El frontend se creo utilizando el framework de flask que permite que se ejecute y carguen todas las plantillas de CSS, JavaScript y HTML.
+```python
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
+
+@app.route("/procesar", methods=["POST"])
+def procesar():
+    data = request.get_json()
+    texto = data.get("texto", "")
+    
+    # Aquí podrías procesar el texto como desees, por ahora solo lo devolvemos
+    resultado = f"Juego procesado con el siguiente contenido:\n{texto}"
+    
+    return jsonify({"resultado": resultado})
+
+
+@app.route("/configuracion", methods=["GET"])
+def configuracion():
+    return render_template("configuracion.html")
+
+@app.route("/iniciarJuego", methods=["GET"])
+def iniciar_juego():
+    return render_template("iniciarJuego.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+
+### Lógica del backend
+
+El backend se contruyó mediante el framework de nodeJS llamado NEST, este se encarga de la lógica del programa, el mandar todas las directrices que el usuario desea al arduino mediante conexión serial física de este desde la computadora.
+```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+   // Habilitar CORS para múltiples orígenes
+  app.enableCors({
+    origin: ['http://localhost:5000', 'http://127.0.0.1:5000'], // Agrega ambos orígenes
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
+El puerto que se utilizó es el puerto COM8 y mediante este se fue transfiriendo toda la información al arduino. Las principales funciones que se utilizaron fueron las funciones **ajustarModo**, el cual se encarga de ajustar el modo en el cual se encuentra el arduino enviándole un mensaje serial; **enviarNumero**, el que se encarga de enviar un número del 0 al 15 a partir de la selección que se recibe del frontend por parte del usuario para que el arduiono verifique si este una bomba en ese lugar; **procesarTexto**, el que se encarga de procesar el texto del archivo de configuración para que se entendible para el arduino envíandolo en bytes y **configToBytes**, el cual se encarga de darle el formato a un archivo de configuración para que luego pueda ser procesado para que sea enviado al arduino.
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { SerialPort } from 'serialport';
+
+@Injectable()
+export class AppService {
+  private puertoSerial: SerialPort;
+
+  constructor() {
+    this.puertoSerial = new SerialPort({
+      path: 'COM8', // Asegúrate de que sea el correcto
+      baudRate: 9600,
+    });   
+
+    this.puertoSerial.on('open', () => {
+      console.log('Puerto serial abierto');
+    });
+
+    this.puertoSerial.on('error', (err) => {
+      console.error('Error en el puerto serial:', err);
+    });
+  }
+
+  getHello(): string {
+    return 'Hello World!';
+  }
+
+  ajustarModo(texto: string): void {
+    try {
+      // Convertir el texto a un Buffer
+      const bytes = Buffer.from(texto, 'utf-8');
+  
+      // Enviar los bytes al puerto serial
+      this.puertoSerial.write(bytes, (err) => {
+        if (err) {
+          console.error("Error al escribir en el puerto serial:", err.message);
+        } else {
+          console.log(`Modo "${texto}" enviado correctamente al puerto serial.`);
+        }
+      });
+    } catch (error) {
+      console.error("Error al ajustar el modo:", error.message);
+    }
+  }
+
+  enviarNumero(numero: string): void {
+    try {
+      // Convertir el string a un Buffer
+      const buffer = Buffer.from(numero, 'utf-8');
+  
+      // Enviar el string al puerto serial
+      this.puertoSerial.write(buffer, (err) => {
+        if (err) {
+          console.error("Error al escribir en el puerto serial:", err.message);
+        } else {
+          console.log(`String "${numero}" enviado correctamente al puerto serial.`);
+        }
+      });
+    } catch (error) {
+      console.error("Error al enviar el string:", error.message);
+    }
+  }
+
+  procesarTexto(texto: string): { resultado: string } {
+    const bytes = configToBytes(texto);
+    const bin_str = bytes[1].toString(2).padStart(8, '0') + bytes[0].toString(2).padStart(8, '0');
+    
+    this.puertoSerial.write(bytes, (err) => {
+      if (err) {
+        console.error("Error al escribir en el puerto serial:", err.message);
+      } else {
+        console.log("Datos enviados correctamente al Arduino.");
+      }
+    });
+
+    return { resultado: `Bits enviados: ${bin_str}` };
+  }
+  
+}
+
+
+function configToBytes(texto: string): Buffer {
+  let ram = 0;
+
+  const lineas = texto.split('\n');
+  for (let linea of lineas) {
+    linea = linea.trim();
+    if (linea.startsWith("ADD")) {
+      try {
+        let clean = linea.split("//")[0]
+          .replace("ADD", "")
+          .replace("x:", "")
+          .replace("y:", "")
+          .trim();
+
+        const [xStr, yStr] = clean.split(",");
+        const x = parseInt(xStr.trim());
+        const y = parseInt(yStr.trim());
+
+        if (x >= 1 && x <= 4 && y >= 1 && y <= 4) {
+          const pos = (y - 1) * 4 + (x - 1);
+          ram |= (1 << pos);
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+  }
+
+  const byte0 = ram & 0xFF;
+  const byte1 = (ram >> 8) & 0xFF;
+
+  return Buffer.from([byte0, byte1]);
+}
+```
+#### Rutas
+Las rutas mediante las que el backend recibe la información son las rutas:
+- /enviar-numero
+- /ajustar-modo
+- /procesar
+```ts
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { AppService } from './app.service';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+
+  @Post('procesar')
+  procesarTexto(@Body('content') bombas: string) {
+    return this.appService.procesarTexto(bombas);
+  }
+
+  @Post('ajustar-modo')
+  ajustarModo(@Body('mode') mode: string) {
+    this.appService.ajustarModo(mode);
+  }
+
+  @Post('/enviar-numero')
+  enviarNumero(@Body('numero') numero: any) {
+    this.appService.enviarNumero(numero);
+  }
+}
+```
+
+### Lógica dentro del arduino
 
 
 
+### Memoria RAM
+La memoria RAM, dada a la simplicidad de esta misma, en vez de hacerla como una memoria RAM formalmente dicha, se decidió utilizar un registro en serie a la derecha para facilitar la recolección así como el ingreso de la información dentro de estos. Para esto mismo se utilizaron 16 flipflops de tipo D, uno por cada bit de información que se desea guardar, todos conectados en serie y tomando cada salida de estos para poder indicar mediante una salida y también proporcionarle al arduino conocimiento sobre el estado de este flipflop, si está con una bomba (estado 1) o si está sin bomba (estado 0).
+![6](./img/6.jpeg)
+El ingreso de datos se hace mediante una conjunto de datos que se van ingresando en cadena, es decir, si se quiere ingresar una bomba en la última posición, se ingresa la cadena *0000000000000001*, siendo cada número una represetación del estado de cada flipflop en su respectiva posición indicada.
 
-
-
-### Main
