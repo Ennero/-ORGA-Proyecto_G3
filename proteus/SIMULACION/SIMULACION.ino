@@ -16,6 +16,7 @@
     lcd.display();
     print("<- BUSCAMINAS ->", 0);
     Serial.begin(9600);
+    Serial1.begin(9600);
     delay(1000);
     pinMode(DATA_PIN, OUTPUT);
     pinMode(CLK_PIN, OUTPUT);
@@ -37,10 +38,20 @@
   }
   
   void loop() {
+    if (Serial.available()) {
+      handleInput(Serial); // PC por USB
+    }
+  
+    if (Serial1.available()) {
+      handleInput(Serial1); // Bluetooth
+    }
+  }
+
+  void handleInput(Stream &port) {
     String mode = "";
     
-    if (Serial.available()) {
-      mode = Serial.readString();
+    if (port.available()) {
+      mode = port.readString();
     
       if (mode == "configuration") {
         turnOnConfigLed();
@@ -48,26 +59,26 @@
         print("MODO", 0);
         print("CONFIGURACION", 1);
         while(true) {
-            if (Serial.peek() == 'X') {
-              Serial.read();
+            if (port.peek() == 'X') {
+              port.read();
               lcd.clear();
               print("Salida del", 0);
               print("modo config.", 1);
               turnOffAll();
               mode = "";
               break;
-            } else if (Serial.available() >= 2) {
+            } else if (port.available() >= 2) {
             byte ram_data[2];        
-            ram_data[0] = Serial.read(); // LSB (bits 0-7)
-            ram_data[1] = Serial.read(); // MSB (bits 8-15)
+            ram_data[0] = port.read(); // LSB (bits 0-7)
+            ram_data[1] = port.read(); // MSB (bits 8-15)
             lcd.clear();
             print("Datos", 0);
             print("recibidos", 1);
             delay(200);
-            Serial.print("Byte 0: ");
-            Serial.println(ram_data[0], BIN);
-            Serial.print("Byte 1: ");
-            Serial.println(ram_data[1], BIN);
+            port.print("Byte 0: ");
+            port.println(ram_data[0], BIN);
+            port.print("Byte 1: ");
+            port.println(ram_data[1], BIN);
             
             writeToRAM(ram_data);
           }
@@ -80,15 +91,15 @@
         int pos_whitout_bombs = 16 - getNumBombs();
         int verified_pos = 0;
         while (true) {
-            if (Serial.peek() == 'X') {
-              Serial.read();
+            if (port.peek() == 'X') {
+              port.read();
               lcd.clear();
               print("X - salida juego.", 1);
               turnOffAll();
               mode = "";
               break;
-            } else if (Serial.available() >= 1) {
-            String text = Serial.readString();
+            } else if (port.available() >= 1) {
+            String text = port.readString();
             int num = text.toInt() - 1;
 
             lcd.clear();
