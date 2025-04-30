@@ -40,6 +40,15 @@
                 </div>
             </div>
         </div>
+        <div id="YouWinModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <img src="{{ url_for('static', filename='img/ganar.png') }}" alt="You Win" class="game-over-img">
+                <div class="modal-buttons">
+                    <button onclick="enviarGame(); reiniciarJuego()">Reiniciar Juego</button>
+                    <button onclick="enviarX(); irMenuPrincipal()">Menú Principal</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <button onclick="enviarX(); window.parent.mostrarTab('principal')">Regresar</button>
@@ -50,6 +59,9 @@
 
     // Recuperar las posiciones de las bombas desde localStorage
     const posicionesBombas = JSON.parse(localStorage.getItem('posicionesBombas')) || [];
+
+    const casillasBuenas = 16 - posicionesBombas.length; // Contador de casillas buenas
+    let contadorCasillasBuenas = 0;
 
     function enviarGame() {
         // Llamar al backend para ajustar el modo a "configuracion"
@@ -85,12 +97,18 @@
             const posicion = (index + 1).toString(); // Convertir índice a posición (1 basado)
             btn.querySelector('img').src = "{{ url_for('static', filename='img/pared.png') }}"; // Imagen por defecto
             btn.dataset.posicion = posicion; // Guardar la posición en un atributo personalizado
+            contadorCasillasBuenas = 0; // Reiniciar contador de casillas buenas
         });
     }
 
     // Función para mostrar el modal de Game Over
     function mostrarGameOver() {
         const modal = document.getElementById('gameOverModal');
+        modal.style.display = 'flex'; // Mostrar el modal
+    }
+
+    function mostraGanaste() {
+        const modal = document.getElementById('YouWinModal');
         modal.style.display = 'flex'; // Mostrar el modal
     }
 
@@ -144,6 +162,14 @@
                 } else {
                     enviarPosicion(posicion); // Enviar la posición al backend
                     this.querySelector('img').src = "{{ url_for('static', filename='img/hongo.png') }}"; // Imagen de teclado
+                    // Incrementar el contador de casillas buenas
+                    contadorCasillasBuenas++;
+                    console.log("Contador de casillas buenas:", contadorCasillasBuenas); // Para depuración
+                }
+
+                if (contadorCasillasBuenas === casillasBuenas) {
+                    // Si se han seleccionado todas las casillas buenas, mostrar el modal de Has ganado
+                    mostraGanaste(); // Mostrar el modal de Ganaste
                 }
             }
         });
