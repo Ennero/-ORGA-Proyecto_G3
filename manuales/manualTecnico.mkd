@@ -252,3 +252,5 @@ La memoria RAM, dada a la simplicidad de esta misma, en vez de hacerla como una 
 ![6](./img/6.jpeg)
 El ingreso de datos se hace mediante una conjunto de datos que se van ingresando en cadena, es decir, si se quiere ingresar una bomba en la última posición, se ingresa la cadena *0000000000000001*, siendo cada número una represetación del estado de cada flipflop en su respectiva posición indicada.
 
+### Aplicación movil 
+Para la creación de la aplicación movil se utilizó la página de código abierto llamada *MIT App creator* esta permite que se puedan crear aplicaciones moviles mediante programación a bloques, facilitando en gran medida el proceso de la creación de esta, teniendo como desventaja el hecho de tener poca flexibilidad para poder realizar modificaciones en esta.
