@@ -1,11 +1,20 @@
+  #include <LiquidCrystal_I2C.h>
+  
   const int DATA_PIN = 13;
   const int CLK_PIN = 12;
   const int pos[4][4]={{23, 25, 27, 29}, {31, 33, 35, 37}, {39, 41, 43, 45}, {47, 49, 51, 53}};
   const int configLed = 6;
   const int gameLed = 5;
-  const int looseLed = 4;
+  const int winLed = 4;
+  const int looseLed = 3;
+  LiquidCrystal_I2C lcd(0x27,16,2);
   
   void setup() {
+    lcd.init();
+    lcd.backlight();
+    lcd.clear();
+    lcd.display();
+    print("<- BUSCAMINAS ->", 0);
     Serial.begin(9600);
     delay(1000);
     pinMode(DATA_PIN, OUTPUT);
@@ -29,25 +38,32 @@
   
   void loop() {
     String mode = "";
+    
     if (Serial.available()) {
       mode = Serial.readString();
     
       if (mode == "configuration") {
-        Serial.println("==== MODO CONFIGURACION ====");
-        turnOnconfigLed();
+        turnOnConfigLed();
+        lcd.clear();
+        print("MODO", 0);
+        print("CONFIGURACION", 1);
         while(true) {
-            
             if (Serial.peek() == 'X') {
               Serial.read();
-              Serial.println("Salida del modo configuracion.");
+              lcd.clear();
+              print("Salida del", 0);
+              print("modo config.", 1);
+              turnOffAll();
               mode = "";
               break;
             } else if (Serial.available() >= 2) {
             byte ram_data[2];        
             ram_data[0] = Serial.read(); // LSB (bits 0-7)
             ram_data[1] = Serial.read(); // MSB (bits 8-15)
-        
-            Serial.println("Datos recibidos:");
+            lcd.clear();
+            print("Datos", 0);
+            print("recibidos", 1);
+            delay(200);
             Serial.print("Byte 0: ");
             Serial.println(ram_data[0], BIN);
             Serial.print("Byte 1: ");
@@ -57,22 +73,30 @@
           }
         }
       } else if (mode == "game"){
-        Serial.println("==== MODO JUEGO ====");
+        lcd.clear();
+        print("MODO", 0);
+        print("JUEGO", 1);
         turnOnGameLed();
         int pos_whitout_bombs = 16 - getNumBombs();
         int verified_pos = 0;
         while (true) {
             if (Serial.peek() == 'X') {
               Serial.read();
-              Serial.println("Salida del modo juego.");
+              lcd.clear();
+              print("X - salida juego.", 1);
+              turnOffAll();
               mode = "";
               break;
             } else if (Serial.available() >= 1) {
             String text = Serial.readString();
             int num = text.toInt() - 1;
 
-            if (num > 15 || num <= 0) {
-              Serial.println("Numero de posicion invalida.");
+            lcd.clear();
+
+            if (num > 15 || num < 0) {
+              lcd.clear();
+              print("Numero de", 0);
+              print("posicion invalida.", 1);
               continue;
             }
             
@@ -80,32 +104,36 @@
             int column = num % 4;
       
             int estado = digitalRead(pos[row][column]);
-      
+
+            String posX = String(row + 1);
+            String posY = String(column + 1);
+            
             if (estado == HIGH) {
-              Serial.print("Hay una bomba en la");
-              Serial.print(" fila: ");
-              Serial.print(row + 1);
-              Serial.print(" columna: ");
-              Serial.println(column +1 );
-              Serial.println("---- ¡Perdiste! ----");
-              Serial.println("Salida del modo juego.");
+              lcd.clear();
+              print("HAY BOMBA", 0); 
+              print("Fila: " + posX + " Col: " + posY, 1);
+              delay(2000);
+              lcd.clear();
+              print("-- PERDISTE --", 0);
+              print("Salida juego", 1);
               mode = "";
               turnOnLooseLed();
               break;
             } else {
-              Serial.print("No hay bomba en la");
-              Serial.print(" fila: ");
-              Serial.print(row + 1);
-              Serial.print(" columna: ");
-              Serial.println(column +1 );
+              lcd.clear();
+              print("NO HAY BOMBA", 0);
+              print("Fila: " + posX + " Col: " + posY, 1);
+              delay(2000);
             }
             
             verified_pos++;
           }
     
           if(verified_pos >= pos_whitout_bombs) {
-            Serial.println("---- ¡Ganaste! ----");
-            Serial.println("Salida del modo juego.");
+            lcd.clear();
+            print("-- GANASTE --", 0);
+            print("Salida juego", 1);
+            turnOnWinLed();
             mode = "";
             break;
           }
@@ -142,20 +170,51 @@
     return num_bombs;
   }
   
-  void turnOnconfigLed() {
+  void turnOnConfigLed() {
     digitalWrite(configLed, HIGH);
     digitalWrite(gameLed, LOW);
     digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, LOW);
   }
   
   void turnOnGameLed() {
     digitalWrite(configLed, LOW);
     digitalWrite(gameLed, HIGH);
     digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, LOW);
+  }
+
+  void turnOnWinLed() {
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, HIGH);
   }
   
   void turnOnLooseLed() {
     digitalWrite(configLed, LOW);
     digitalWrite(gameLed, LOW);
     digitalWrite(looseLed, HIGH);
+    digitalWrite(winLed, LOW);
+  }
+
+  void turnOffAll() {
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, LOW);
+  }
+
+  int centerText(String text) {
+    int textLength = text.length();
+
+    if (textLength > 16)
+      return 0;
+
+    return (16 - textLength) / 2;
+  }
+
+  void print(String text, int row) {
+    lcd.setCursor(centerText(text),row);
+    lcd.print(text);
   }
