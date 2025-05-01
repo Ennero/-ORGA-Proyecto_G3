@@ -108,7 +108,28 @@ Una vez que el juego ha terminado, se debe de presionar el botón físico "Nuevo
 - LED Verde: Encendido = Estado "Ganaste" (todas las casillas seguras reveladas). Se apaga al presionar "Nuevo Juego".
 
 #### Flujo del juego
+1. El juego se puede jugar tanto con el frontend desde un navegador o mediante una aplicación movil.
+2. Si se desea utilizar el frontend desde un navegador, se mostrará la siguiente pantalla. En esta pantalla se tienen las siguiente opciones: 
+   ![1](./img/1.jpeg)
+   - Nuevo Juego: Esta hace que se recargue la pagina para poder iniciar un juego.
+   - Cargar archivo: Abre el explorador de archivos para que se pueda cargar un archivo de configuración al arduino.
+    ![2](./img/2.jpeg)
+   - Configurar Juego: Esta opcion envia la configuración previamente cargada al arduino para aplicarlo a la RAM.
+   - Iniciar Juego: Este manda al usuario a la pantalla que se encarga de permitir al usuario jugar.
+    ![4](./img/4.jpeg)
 
+        - Durante el modo juego se tiene que colocar la posición a la cual se quiere revisar si tiene alguna bomba y en caso de tener una bomba, se perderá la partida.  
+   - Configuracion: Este modo permite que se pueda colocar la posición de las bombas y luego configurarlas dentro de la memoria RAM que está conectada al Arduino.
+    ![3](./img/3.jpeg)
 
+        - En este modo se tiene que colocar la posición de la bomba en la posición de la matriz que se quiere que esté a la hora de jugar.
 
-
+3. Ahora si se desea jugar mediante la aplicación movil que se conecta en bluetooth, se abre la aplicación, se conecta al módulo bluetooth con el dispositivo y se muestra la siguiente pantalla
+![5](./img/5.jpeg)
+    - En la aplicación movil se inicia el juego  y se tiene las siguientes opciones:
+      - Generar conexión: Se selecciona el dispositivo para conectarse y se conecta al modulo bluetooth.
+      - Desconectar: Desconecta el dispositivo bluetooth del teléfono.
+      - Iniciar juego: Envia una señal al arduino para indicar que se finaliza el juego.
+      - Finalizar el juego: Finaliza el juego enviandole una señal al arduino que indica eso mismo.
+4. La aplicación movil, además de los botones descritos previamente; dispone de una matriz con 4 filas y 4 columnas que permite seleccionar cada una de las posiciones necesarias para continuar con el juego. Estando siempre en el modo juego, cuando se quiere que verificar si hay una bomba en una casilla, puesto a que se está jugando, se pulsa dicha casillas.
+5. Todas lo que vaya sucediendo en el juego se irá mostrando mediante la pantalla LCD que está conectada al arduino. Dependiendo de lo que esté haciéndose en el juego, lo indicará mediante una luz led y dependiendo de lo que se haya realizado, se mostrarán indicaciones en el panel LCD.

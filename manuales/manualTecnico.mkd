@@ -1,15 +1,23 @@
 # Manual Técnico - Proyecto
 ## Objetivos
 ### Objetivo General
-- Proporcionar una explicación detallada sobre la implementación del código, la lógica utilizada y las bases para el mantenimiento futuro del programa.
+- Proporcionar una explicación técnica exhaustiva sobre la arquitectura, implementación, lógica de software y hardware, y las bases para el mantenimiento y futuras modificaciones del sistema Buscaminas Bluetooth 4x4.
 ### Objetivos Específicos
-- Presentar y explicar el funcionamiento del código que implementa la solución desarrollada.
-- Detallar el proceso de diseño de las soluciones y la lógica detrás de cada una de ellas.
-
+- Presentar y detallar la arquitectura del sistema, incluyendo los módulos de software (Frontend, Backend, App Móvil, Firmware Arduino) y hardware.
+- Explicar el funcionamiento y la lógica del código fuente de cada componente de software.
+- Detallar el proceso de diseño, las tecnologías seleccionadas y la justificación detrás de las decisiones de implementación.
+- Describir los protocolos de comunicación entre los distintos módulos.
+- Facilitar la comprensión de la interacción entre el software y el hardware (RAM de Flip-Flops, LEDs, LCD, Botón).
+- Proveer una guía para la configuración del entorno de desarrollo y el despliegue del sistema.
 
 ## Alcances del Sistema
 
-Este manual tiene como finalidad facilitar la comprensión de cómo se implementaron las funcionalidades del programa y cómo estas interactúan entre sí para cumplir con el propósito del sistema.
+Este manual cubre los aspectos técnicos de la implementación del proyecto Buscaminas Bluetooth 4x4. Se detalla:
+- La configuración de bombas mediante una interfaz web (Frontend Next.js) que se comunica con un servidor (Backend Python), el cual a su vez envía los datos por comunicación serial al Arduino para almacenarlos en una RAM física de 4x4 (implementada con Flip-Flops).
+- La lógica de juego ejecutada en el Arduino, controlada mediante una aplicación Android (App Inventor) vía Bluetooth.
+- La gestión de estados del juego (Configuración, Jugando, Game Over, Ganaste) y el control de los indicadores visuales (Matriz LED, LEDs de estado, LCD).
+- Los mecanismos de reinicio: botón físico "Nuevo Juego" para reintentar la partida y comando Bluetooth reinicio para volver al modo configuración.
+- Las tecnologías específicas utilizadas: Python (con pyserial), App Inventor, Arduino (C/C++), y lógica digital para la RAM.
 
 
 ## Especificaciones técnicas
@@ -26,4 +34,458 @@ Este manual tiene como finalidad facilitar la comprensión de cómo se implement
 - Python
 ## Lógica y descripción de la solución
 
-### Main
+### Logica del frontend
+El frontend se creo utilizando el framework de flask que permite que se ejecute y carguen todas las plantillas de CSS, JavaScript y HTML.
+```python
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
+
+@app.route("/procesar", methods=["POST"])
+def procesar():
+    data = request.get_json()
+    texto = data.get("texto", "")
+    
+    # Aquí podrías procesar el texto como desees, por ahora solo lo devolvemos
+    resultado = f"Juego procesado con el siguiente contenido:\n{texto}"
+    
+    return jsonify({"resultado": resultado})
+
+
+@app.route("/configuracion", methods=["GET"])
+def configuracion():
+    return render_template("configuracion.html")
+
+@app.route("/iniciarJuego", methods=["GET"])
+def iniciar_juego():
+    return render_template("iniciarJuego.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+
+### Lógica del backend
+
+El backend se contruyó mediante el framework de nodeJS llamado NEST, este se encarga de la lógica del programa, el mandar todas las directrices que el usuario desea al arduino mediante conexión serial física de este desde la computadora.
+```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+   // Habilitar CORS para múltiples orígenes
+  app.enableCors({
+    origin: ['http://localhost:5000', 'http://127.0.0.1:5000'], // Agrega ambos orígenes
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
+El puerto que se utilizó es el puerto COM8 y mediante este se fue transfiriendo toda la información al arduino. Las principales funciones que se utilizaron fueron las funciones **ajustarModo**, el cual se encarga de ajustar el modo en el cual se encuentra el arduino enviándole un mensaje serial; **enviarNumero**, el que se encarga de enviar un número del 0 al 15 a partir de la selección que se recibe del frontend por parte del usuario para que el arduiono verifique si este una bomba en ese lugar; **procesarTexto**, el que se encarga de procesar el texto del archivo de configuración para que se entendible para el arduino envíandolo en bytes y **configToBytes**, el cual se encarga de darle el formato a un archivo de configuración para que luego pueda ser procesado para que sea enviado al arduino.
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { SerialPort } from 'serialport';
+
+@Injectable()
+export class AppService {
+  private puertoSerial: SerialPort;
+
+  constructor() {
+    this.puertoSerial = new SerialPort({
+      path: 'COM8', // Asegúrate de que sea el correcto
+      baudRate: 9600,
+    });   
+
+    this.puertoSerial.on('open', () => {
+      console.log('Puerto serial abierto');
+    });
+
+    this.puertoSerial.on('error', (err) => {
+      console.error('Error en el puerto serial:', err);
+    });
+  }
+
+  getHello(): string {
+    return 'Hello World!';
+  }
+
+  ajustarModo(texto: string): void {
+    try {
+      // Convertir el texto a un Buffer
+      const bytes = Buffer.from(texto, 'utf-8');
+  
+      // Enviar los bytes al puerto serial
+      this.puertoSerial.write(bytes, (err) => {
+        if (err) {
+          console.error("Error al escribir en el puerto serial:", err.message);
+        } else {
+          console.log(`Modo "${texto}" enviado correctamente al puerto serial.`);
+        }
+      });
+    } catch (error) {
+      console.error("Error al ajustar el modo:", error.message);
+    }
+  }
+
+  enviarNumero(numero: string): void {
+    try {
+      // Convertir el string a un Buffer
+      const buffer = Buffer.from(numero, 'utf-8');
+  
+      // Enviar el string al puerto serial
+      this.puertoSerial.write(buffer, (err) => {
+        if (err) {
+          console.error("Error al escribir en el puerto serial:", err.message);
+        } else {
+          console.log(`String "${numero}" enviado correctamente al puerto serial.`);
+        }
+      });
+    } catch (error) {
+      console.error("Error al enviar el string:", error.message);
+    }
+  }
+
+  procesarTexto(texto: string): { resultado: string } {
+    const bytes = configToBytes(texto);
+    const bin_str = bytes[1].toString(2).padStart(8, '0') + bytes[0].toString(2).padStart(8, '0');
+    
+    this.puertoSerial.write(bytes, (err) => {
+      if (err) {
+        console.error("Error al escribir en el puerto serial:", err.message);
+      } else {
+        console.log("Datos enviados correctamente al Arduino.");
+      }
+    });
+
+    return { resultado: `Bits enviados: ${bin_str}` };
+  }
+  
+}
+
+
+function configToBytes(texto: string): Buffer {
+  let ram = 0;
+
+  const lineas = texto.split('\n');
+  for (let linea of lineas) {
+    linea = linea.trim();
+    if (linea.startsWith("ADD")) {
+      try {
+        let clean = linea.split("//")[0]
+          .replace("ADD", "")
+          .replace("x:", "")
+          .replace("y:", "")
+          .trim();
+
+        const [xStr, yStr] = clean.split(",");
+        const x = parseInt(xStr.trim());
+        const y = parseInt(yStr.trim());
+
+        if (x >= 1 && x <= 4 && y >= 1 && y <= 4) {
+          const pos = (y - 1) * 4 + (x - 1);
+          ram |= (1 << pos);
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+  }
+
+  const byte0 = ram & 0xFF;
+  const byte1 = (ram >> 8) & 0xFF;
+
+  return Buffer.from([byte0, byte1]);
+}
+```
+#### Rutas
+Las rutas mediante las que el backend recibe la información son las rutas:
+- /enviar-numero
+- /ajustar-modo
+- /procesar
+```ts
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { AppService } from './app.service';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+
+  @Post('procesar')
+  procesarTexto(@Body('content') bombas: string) {
+    return this.appService.procesarTexto(bombas);
+  }
+
+  @Post('ajustar-modo')
+  ajustarModo(@Body('mode') mode: string) {
+    this.appService.ajustarModo(mode);
+  }
+
+  @Post('/enviar-numero')
+  enviarNumero(@Body('numero') numero: any) {
+    this.appService.enviarNumero(numero);
+  }
+}
+```
+
+### Lógica dentro del arduino
+Dentro del arduino se maneja la logica del programa para poder jugar el juego correctamente. Para esto contiene todas las dependencias necesairas para poder lograar la comunicación serial, tanto con el modulo bluetooth como con el puerto de la computadora que permite que se conecte con el frontend y el usuario.
+```cpp
+  #include <LiquidCrystal_I2C.h>
+  
+  const int DATA_PIN = 13;
+  const int CLK_PIN = 12;
+  const int pos[4][4]={{23, 25, 27, 29}, {31, 33, 35, 37}, {39, 41, 43, 45}, {47, 49, 51, 53}};
+  const int configLed = 6;
+  const int gameLed = 5;
+  const int winLed = 4;
+  const int looseLed = 3;
+  LiquidCrystal_I2C lcd(0x27,16,2);
+  
+  void setup() {
+    lcd.init();
+    lcd.backlight();
+    lcd.clear();
+    lcd.display();
+    print("<- BUSCAMINAS ->", 0);
+    Serial.begin(9600);
+    Serial1.begin(9600);
+    delay(1000);
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(CLK_PIN, OUTPUT);
+    digitalWrite(DATA_PIN, LOW);
+    digitalWrite(CLK_PIN, LOW);
+    
+    pinMode(configLed, OUTPUT);
+    pinMode(gameLed, OUTPUT);
+    pinMode(looseLed, OUTPUT);
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, LOW);
+    
+    for(int i=0; i<4; i++) {
+      for(int j=0; j<4; j++) {
+        pinMode(pos[i][j], INPUT);
+      }
+    }
+  }
+  
+  void loop() {
+    if (Serial.available()) {
+      handleInput(Serial); // PC por USB
+    }
+  
+    if (Serial1.available()) {
+      handleInput(Serial1); // Bluetooth
+    }
+  }
+
+  void handleInput(Stream &port) {
+    String mode = "";
+    
+    if (port.available()) {
+      mode = port.readString();
+    
+      if (mode == "configuration") {
+        turnOnConfigLed();
+        lcd.clear();
+        print("MODO", 0);
+        print("CONFIGURACION", 1);
+        while(true) {
+            if (port.peek() == 'X') {
+              port.read();
+              lcd.clear();
+              print("Salida del", 0);
+              print("modo config.", 1);
+              turnOffAll();
+              mode = "";
+              break;
+            } else if (port.available() >= 2) {
+            byte ram_data[2];        
+            ram_data[0] = port.read(); // LSB (bits 0-7)
+            ram_data[1] = port.read(); // MSB (bits 8-15)
+            lcd.clear();
+            print("Datos", 0);
+            print("recibidos", 1);
+            delay(200);
+            port.print("Byte 0: ");
+            port.println(ram_data[0], BIN);
+            port.print("Byte 1: ");
+            port.println(ram_data[1], BIN);
+            
+            writeToRAM(ram_data);
+          }
+        }
+      } else if (mode == "game"){
+        lcd.clear();
+        print("MODO", 0);
+        print("JUEGO", 1);
+        turnOnGameLed();
+        int pos_whitout_bombs = 16 - getNumBombs();
+        int verified_pos = 0;
+        while (true) {
+            if (port.peek() == 'X') {
+              port.read();
+              lcd.clear();
+              print("X - salida juego.", 1);
+              turnOffAll();
+              mode = "";
+              break;
+            } else if (port.available() >= 1) {
+            String text = port.readString();
+            int num = text.toInt() - 1;
+
+            lcd.clear();
+
+            if (num > 15 || num < 0) {
+              lcd.clear();
+              print("Numero de", 0);
+              print("posicion invalida.", 1);
+              continue;
+            }
+            
+            int row = num / 4;
+            int column = num % 4;
+      
+            int estado = digitalRead(pos[row][column]);
+
+            String posX = String(row + 1);
+            String posY = String(column + 1);
+            
+            if (estado == HIGH) {
+              lcd.clear();
+              print("HAY BOMBA", 0); 
+              print("Fila: " + posX + " Col: " + posY, 1);
+              delay(2000);
+              lcd.clear();
+              print("-- PERDISTE --", 0);
+              print("Salida juego", 1);
+              mode = "";
+              turnOnLooseLed();
+              break;
+            } else {
+              lcd.clear();
+              print("NO HAY BOMBA", 0);
+              print("Fila: " + posX + " Col: " + posY, 1);
+              delay(2000);
+            }
+            
+            verified_pos++;
+          }
+    
+          if(verified_pos >= pos_whitout_bombs) {
+            lcd.clear();
+            print("-- GANASTE --", 0);
+            print("Salida juego", 1);
+            turnOnWinLed();
+            mode = "";
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  void pulseClock() {
+    digitalWrite(CLK_PIN, HIGH);
+    delay(50);
+    digitalWrite(CLK_PIN, LOW);
+    delay(50);
+  }
+  
+  void writeToRAM(byte data[]) {
+    for (int i = 15; i >= 0; i--) {
+      byte currentByte = data[i / 8];
+      byte bitValue = (currentByte >> (i % 8)) & 0x01;
+  
+      digitalWrite(DATA_PIN, bitValue);
+      pulseClock();
+    }
+  }
+  
+  int getNumBombs() {
+    int num_bombs = 0;
+    for(int i=0; i<4; i++) {
+      for(int j=0; j<4; j++) {
+        if(digitalRead(pos[i][j]) == HIGH)
+          num_bombs++;
+      }
+    }
+    return num_bombs;
+  }
+  
+  void turnOnConfigLed() {
+    digitalWrite(configLed, HIGH);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, LOW);
+  }
+  
+  void turnOnGameLed() {
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, HIGH);
+    digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, LOW);
+  }
+
+  void turnOnWinLed() {
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, HIGH);
+  }
+  
+  void turnOnLooseLed() {
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, HIGH);
+    digitalWrite(winLed, LOW);
+  }
+
+  void turnOffAll() {
+    digitalWrite(configLed, LOW);
+    digitalWrite(gameLed, LOW);
+    digitalWrite(looseLed, LOW);
+    digitalWrite(winLed, LOW);
+  }
+
+  int centerText(String text) {
+    int textLength = text.length();
+
+    if (textLength > 16)
+      return 0;
+
+    return (16 - textLength) / 2;
+  }
+
+  void print(String text, int row) {
+    lcd.setCursor(centerText(text),row);
+    lcd.print(text);
+  }
+```
+
+
+### Memoria RAM
+La memoria RAM, dada a la simplicidad de esta misma, en vez de hacerla como una memoria RAM formalmente dicha, se decidió utilizar un registro en serie a la derecha para facilitar la recolección así como el ingreso de la información dentro de estos. Para esto mismo se utilizaron 16 flipflops de tipo D, uno por cada bit de información que se desea guardar, todos conectados en serie y tomando cada salida de estos para poder indicar mediante una salida y también proporcionarle al arduino conocimiento sobre el estado de este flipflop, si está con una bomba (estado 1) o si está sin bomba (estado 0).
+![6](./img/6.jpeg)
+El ingreso de datos se hace mediante una conjunto de datos que se van ingresando en cadena, es decir, si se quiere ingresar una bomba en la última posición, se ingresa la cadena *0000000000000001*, siendo cada número una represetación del estado de cada flipflop en su respectiva posición indicada.
+
+### Aplicación movil 
+Para la creación de la aplicación movil se utilizó la página de código abierto llamada *MIT App creator* esta permite que se puedan crear aplicaciones moviles mediante programación a bloques, facilitando en gran medida el proceso de la creación de esta, teniendo como desventaja el hecho de tener poca flexibilidad para poder realizar modificaciones en esta.
+![7](./img/7.png)
+
