@@ -47,16 +47,23 @@
 
     <script>
 
+        let posicionesInvalidas = false; // Variable para controlar si hay posiciones inválidas
+        let sintaxis = false; // Variable que valida que comience con un conf_ini, y termine con conf:fin
+        let configuraciones_malas = []; // Lista que guarda las coordenadas malas
+
         // Función para manejar el inicio de un nuevo juego
         function nuevoJuego() {
             document.getElementById('entradaArchivo').value = ''; // Limpiar textarea de entrada
             document.getElementById('salidaArchivo').value = ''; // Limpiar textarea de salida
             alert("Nuevo juego iniciado.");
+            // Reiniciamos las variables
+            posicionesInvalidas = false;
+            sintaxis = false;
+            configuraciones_malas = [];
         }
         
         // Función para cargar el archivo
         function cargarArchivo() {
-
             fetch("http://localhost:3000/ajustar-modo", { // URL del backend
                 method: "POST",
                 headers: {
@@ -88,7 +95,7 @@
                             localStorage.setItem('posicionesBombas', JSON.stringify(posiciones));
                             console.log("Posiciones guardadas:", posiciones); // Para depuración
                         } else {
-                            alert("No se encontraron posiciones válidas en el archivo.");
+                            console.log("Las posiciones no son válidas." , posiciones); // Para depuración
                         }
                         // Mostrar el contenido del archivo en el textarea de entrada
                         document.getElementById('entradaArchivo').value = e.target.result;
@@ -96,12 +103,12 @@
                     reader.readAsText(archivo);
                 }
             };
-
             // Simulamos un clic en el input oculto para abrir el selector de archivos
             inputArchivo.click();
         }
 
         function procesarArchivo(contenido) {
+            console.log("EL contenido es: " , contenido);
             const posiciones = [];
             const lineas = contenido.split('\n');
         
@@ -120,13 +127,32 @@
                     if (match) {
                         const x = parseInt(match[1]);
                         const y = parseInt(match[2]);
+                        console.log(`Coordenadas extraídas: x=${x}, y=${y}`); // Para depuración
+                        
+                        if (x < 1 || x > 4 || y < 1 || y > 4) {
+                            posicionesInvalidas = true; // Cambiar a true si hay coordenadas inválidass
+                            configuraciones_malas.push(`La posición: x=${x}, y=${y}, es invalida, eliminando`)
+                        }
         
                         // Calcular la posición en la matriz (1 basado)
                         const posicion = (y - 1) * 4 + x; // Matriz 4x4
                         posiciones.push(posicion.toString());
+                        // Validamos que la posición esté dentro del rango esperado
+                        console.log(`Posición extraída: ${posicion}`); // Para depuración
                     }
                 }
             });
+
+            // Significa que no obtuvo el conf_fin
+            if (dentroDeConfiguracion === true) {
+                console.log("Nunca cerraste la instrucción");
+                sintaxis = true;
+            }
+
+            if (posiciones.length === 0){
+                console.log("No se obtuvo la sintaxis correcta");
+                sintaxis = true;
+            }
             
             console.log("Posiciones extraídas:", posiciones); // Para depuración
             return posiciones;
@@ -136,6 +162,26 @@
         async function configurarJuego() {
             const contenido = document.getElementById('entradaArchivo').value;
             console.log("Contenido del archivo:", contenido); // Para depuración
+            let mensajeError = ""; // Variable para almacenar el mensaje de error
+
+            if (posicionesInvalidas) {
+                mensajeError = "Hay posiciones inválidas en el archivo";
+                // Iteramos sobre la lista de configuraciones malas y las mostramos
+                configuraciones_malas.forEach(configuracion => {
+                    mensajeError += `\n${configuracion}`; // Agregamos la configuración mala al mensaje de error
+                });
+                document.getElementById('salidaArchivo').value = mensajeError; // Mostrar el error en el textarea de salida
+                posicionesInvalidas = false; // Reiniciar la variable para la próxima vez
+            }
+
+            if (sintaxis) {
+                mensajeError = "El archivo no contiene las etiquetas 'conf_ini' y 'conf:fin'.";
+                console.error(mensajeError);
+                document.getElementById('salidaArchivo').value = mensajeError; // Mostrar el error en el textarea de salida
+                enviarX();
+                sintaxis = false; // Reiniciamos la variable para la proxima vez
+                return; // Salir de la función
+            }
 
             if (contenido) {
                 try {
@@ -149,15 +195,22 @@
                     });
 
                     const data = await response.json();
-                    document.getElementById('salidaArchivo').value = data.resultado;
 
                     // Llamar a enviarX después de que se complete el procesamiento
                     enviarX();
                 } catch (error) {
                     console.error("Error al procesar el archivo:", error);
+                    document.getElementById('salidaArchivo').value = "Error al procesar el archivo. Revisa la consola para más detalles.";
                 }
             } else {
                 alert("Primero carga un archivo.");
+            }
+
+            // Verificamos si mensajeError tiene un valor
+            if (mensajeError == "") {
+                document.getElementById('salidaArchivo').value = "Coordenadas enviadas de forma correcta"; // Mostrar el error en el textarea de salida
+            } else {
+                document.getElementById('salidaArchivo').value = mensajeError; // Mostrar el error en el textarea de salida
             }
         }
         document.querySelectorAll('.bomba').forEach(bomba => {
