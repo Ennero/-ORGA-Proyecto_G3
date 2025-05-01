@@ -454,7 +454,10 @@ Administró de manera eficiente el presupuesto asignado al grupo, garantizando u
 
 ![alt text](image-4.png)
 
-## FOTOGRAFÍA DE LOS CIRCUITOS FÍSICOS  
+## FOTOGRAFÍA DE LOS CIRCUITOS
+
+### - Ram en Proteus
+![alt text](image-8.png)
 
 ### - Ram en protoboard
 ![alt text](image-6.png)
