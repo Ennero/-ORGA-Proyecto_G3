@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='configuracion.css') }}">
+    <title>modo configuracion </title>
+<body>
+    <div class="container">
+        <div class="matriz">
+            <!-- Matriz 4x4 de botones -->
+            <button onclick="">1</button>
+            <button onclick="" >2</button>
+            <button onclick="">3</button>
+            <button onclick="">4</button>
+            <button onclick="">5</button>
+            <button onclick="">6</button>
+            <button onclick="">7</button>
+            <button onclick="">8</button>
+            <button onclick="">9</button>
+            <button onclick="">10</button>
+            <button onclick="">11</button>
+            <button onclick="">12</button>
+            <button onclick="">13</button>
+            <button onclick="">14</button>
+            <button onclick="">15</button>
+            <button onclick="">16</button>
+        </div>
+    </div>
+    
+    <button onclick="enviarX();window.parent.mostrarTab('principal')">Regresar</button>
+    <button onclick="mandarConfiguracion()">Mandar configuracion de bombas</button>
+    <button onclick="eliminarSeleccion()">Eliminar seleccion de bombas</button>
+   
+    
+</body>
+<script>
+    // Array para guardar los botones seleccionados
+    const seleccionados = [];
+
+    // Selecciona todos los botones de la matriz
+    document.querySelectorAll('.matriz button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const valor = this.textContent;
+            // Alternar selección
+            if (seleccionados.includes(valor)) {
+                // Si ya está seleccionado, lo quitamos
+                seleccionados.splice(seleccionados.indexOf(valor), 1);
+                this.classList.remove('seleccionado'); // Quita la clase
+            } else {
+                seleccionados.push(valor);
+                this.classList.add('seleccionado'); // Agrega la clase
+            }
+        });
+    });
+    
+    function eliminarSeleccion() {
+        seleccionados.length = 0; // Limpiar el array de seleccionados
+        document.querySelectorAll('.matriz button').forEach(btn => {
+            btn.classList.remove('seleccionado'); // Quitar la clase de selección
+        });
+    }
+
+    function enviarX(){
+        // Llamar al backend para ajustar el modo a "configuracion"
+        fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mode: "X" }) // Enviamos el modo
+        })
+        .catch(error => {
+            console.error("Error al ajustar el modo:", error);
+        });
+    }
+
+    // Función para mandar la configuración
+    function mandarConfiguracion() {
+        if (seleccionados.length === 0) {
+            alert("No has seleccionado ningún botón.");
+        } else {
+            // Guardar la lista de seleccionados en localStorage
+            localStorage.setItem('posicionesBombas', JSON.stringify(seleccionados));
+
+            // Crear el texto en el formato solicitado
+            let texto = "";
+            seleccionados.forEach(valor => {
+                const posicion = parseInt(valor) - 1; // Convertir el valor a índice (0 basado)
+                const x = (posicion % 4) + 1; // Calcular la columna (x)
+                const y = Math.floor(posicion / 4) + 1; // Calcular la fila (y)
+                texto += `ADD x: ${x}, y: ${y}\n`; // Agregar al texto
+            });
+
+            // Mostrar el texto generado (opcional)
+            console.log("Texto generado:\n", texto);
+
+            // Enviar el texto al backend
+            fetch("http://localhost:3000/procesar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: texto }) // Enviar el texto generado
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Respuesta del backend: " + data.resultado); // Mostrar la respuesta del backend
+            })
+            .catch(error => {
+                console.error("Error al enviar la configuración:", error);
+            });
+        }
+    }
+</script>
+</html>

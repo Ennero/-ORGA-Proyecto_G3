@@ -1,19 +1,40 @@
 /* static/estilos.css */
 body {
     font-family: Arial, sans-serif;
-    background-color: #e9f2fd;
+    background-image: url('./img/bom2.jpg'); /* Imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     margin: 0;
     padding: 20px;
     text-align: center;
+    position: relative; /* Necesario para el pseudo-elemento */
+}
+
+body::before {
+    content: "";
+    position: fixed; /* Cambiado a fixed para cubrir toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Oscurece la imagen */
+    z-index: -1; /* Coloca la capa detrás del contenido */
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .botones {
     margin-bottom: 20px;
+    border: #e9f2fd;
+    border-radius: 5px;
+    padding: 10px;
 }
 
 button {
@@ -25,18 +46,120 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+h1 {
+    font-size: 36px; /* Tamaño del texto */
+    color: #ffffff; /* Color del texto */
+    text-shadow: 2px 2px 4px #000000; /* Sombra para el texto */
+   /*  border: 3px solid #4da6ff; Borde alrededor del texto */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    display: inline-block; /* Ajusta el tamaño del borde al texto */
+    /*background-color: rgba(0, 122, 204, 0.8);  Fondo semitransparente */
+}
+.area-texto {
+    width: 850px; /* Ancho del área de texto */
+    height: 200px; /* Alto del área de texto */
+    font-size: 16px;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: bold;
+    resize: none;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: rgba(132, 132, 132, 0.4);
+    color: #000;
+    text-align: left;
+    margin-left: 0; /* Corrige el valor, debe ser 0 o un valor en px */
+}
+
 
 button:hover {
     background-color: #007acc;
 }
-
-.area-texto {
+.contenido-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
     width: 100%;
-    height: 120px;
-    margin-bottom: 20px;
-    padding: 10px;
-    font-size: 14px;
-    resize: none;
-    border: 1px solid #aaa;
-    border-radius: 5px;
+    margin-top: 30px;
+    gap: 40px; /* Espacio entre textareas y matriz */
+}
+
+.textareas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entrada-texto, .salida-texto {
+    position: static !important; /* Quita el absolute para que funcione el flex */
+    margin: 0;
+}
+
+/* Animación para las bombas */
+.bomba {
+    position: relative;
+    display: inline-block;
+    animation: saltar 1s infinite; /* Hace que la bomba salte */
+}
+
+/* Mecha de la bomba */
+.mecha {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: orange;
+    animation: quemar 2s infinite; /* Animación de la mecha */
+    transform: translateX(-50%);
+}
+
+/* Explosión */
+.explosion {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px; /* Ajusta el tamaño de la explosión */
+    height: 100px;
+    background-image: url('./img/explosion-147909_1920.png'); /* Ruta de la imagen */
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0;
+    animation: explotar 1.5s forwards; /* Animación de explosión */
+}
+
+/* Animación de salto */
+@keyframes saltar {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Animación de la mecha quemándose */
+@keyframes quemar {
+    0% {
+        height: 20px;
+        background-color: orange;
+    }
+    100% {
+        height: 0;
+        background-color: red;
+    }
+}
+
+/* Animación de explosión */
+/* Animación de explosión */
+@keyframes explotar {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(2); /* La explosión se agranda */
+    }
 }

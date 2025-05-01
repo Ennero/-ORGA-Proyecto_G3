@@ -4,32 +4,76 @@
     <meta charset="UTF-8">
     <title>Interfaz de Juego</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
 </head>
 <body>
-    <div class="container">
-        <h1>💣💣 Buscaminas 💣💣</h1>
-
-        <div class="botones">
-            <!-- Botón para iniciar nuevo juego -->
-            <button onclick="nuevoJuego()">Nuevo Juego</button>
-
-            <!-- Botón para cargar el archivo y mandarlo al textarea de entrada -->
-            <button onclick="cargarArchivo()">Cargar Archivo</button>
-
-            <!-- Botón para iniciar el juego -->
-            <button onclick="iniciarJuego()">Iniciar Juego</button>
+    <div id="tab-principal">
+        
+        <div class="container">
+            <h1>
+                <span class="bomba">💣</span> Buscaminas <span class="bomba">💣</span>
+            </h1>
+            <div class="botones">
+                <!-- Botón para iniciar nuevo juego -->
+                <button onclick="nuevoJuego()">Nuevo Juego</button>
+    
+                <!-- Botón para cargar el archivo y mandarlo al textarea de entrada -->
+                <button onclick="cargarArchivo()">Cargar Archivo</button>
+    
+                <!-- Botón para iniciar el juego -->
+                <button onclick="configurarJuego()">Configurar Juego</button>
+    
+                <!-- Botón para iniciar el juego -->
+                <button onclick="mostrarTab('iniciarJuego')">Iniciar Juego</button>
+                <button onclick="mostrarTab('configuracion')">Configuración</button>
+            </div>
+            <div class="contenido-flex">
+                <div class="textareas">
+                    <!-- Textarea para mostrar el contenido del archivo -->
+                    <textarea readonly id="entradaArchivo" class="area-texto entrada-texto" placeholder="Entrada del archivo..."></textarea>
+                    <!-- Textarea para mostrar la salida del juego o procesamiento -->
+                    <textarea readonly id="salidaArchivo" class="area-texto salida-texto" placeholder="Salida del archivo..."></textarea>
+                </div>
+            </div>
         </div>
-
-        <!-- Textarea para mostrar el contenido del archivo -->
-        <textarea readonly id="entradaArchivo" class="area-texto" placeholder="Entrada del archivo..."></textarea>
-
-        <!-- Textarea para mostrar la salida del juego o procesamiento -->
-        <textarea readonly id="salidaArchivo" class="area-texto" placeholder="Salida del archivo..."></textarea>
     </div>
+    <div id="tab-configuracion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1000;">
+        <iframe src="{{ url_for('configuracion') }}" style="border:none; width:100vw; height:100vh;"></iframe>
+    </div>
+    <div id="tab-iniciarJuego" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1000;">
+        <iframe src="{{ url_for('iniciar_juego') }}" style="border:none; width:100vw; height:100vh;"></iframe>
+    </div>
+    
 
     <script>
+
+        let posicionesInvalidas = false; // Variable para controlar si hay posiciones inválidas
+        let sintaxis = false; // Variable que valida que comience con un conf_ini, y termine con conf:fin
+        let configuraciones_malas = []; // Lista que guarda las coordenadas malas
+
+        // Función para manejar el inicio de un nuevo juego
+        function nuevoJuego() {
+            document.getElementById('entradaArchivo').value = ''; // Limpiar textarea de entrada
+            document.getElementById('salidaArchivo').value = ''; // Limpiar textarea de salida
+            alert("Nuevo juego iniciado.");
+            // Reiniciamos las variables
+            posicionesInvalidas = false;
+            sintaxis = false;
+            configuraciones_malas = [];
+        }
+        
         // Función para cargar el archivo
         function cargarArchivo() {
+            fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mode: "configuration" }) // Enviamos el contenido del textarea
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
             // Crear un input oculto para seleccionar el archivo
             const inputArchivo = document.createElement('input');
             inputArchivo.type = 'file';
@@ -41,47 +85,215 @@
                 if (archivo) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
+                        const contenido = e.target.result;
+
+                        // Procesar el contenido del archivo
+                        const posiciones = procesarArchivo(contenido);
+
+                        if (posiciones.length > 0) {
+                            // Guardar las posiciones en localStorage
+                            localStorage.setItem('posicionesBombas', JSON.stringify(posiciones));
+                            console.log("Posiciones guardadas:", posiciones); // Para depuración
+                        } else {
+                            console.log("Las posiciones no son válidas." , posiciones); // Para depuración
+                        }
                         // Mostrar el contenido del archivo en el textarea de entrada
                         document.getElementById('entradaArchivo').value = e.target.result;
                     };
                     reader.readAsText(archivo);
                 }
             };
-
             // Simulamos un clic en el input oculto para abrir el selector de archivos
             inputArchivo.click();
         }
 
-        // Función para manejar el inicio de un nuevo juego
-        function nuevoJuego() {
-            document.getElementById('entradaArchivo').value = ''; // Limpiar textarea de entrada
-            document.getElementById('salidaArchivo').value = ''; // Limpiar textarea de salida
-            alert("Nuevo juego iniciado.");
+        function procesarArchivo(contenido) {
+            console.log("EL contenido es: " , contenido);
+            const posiciones = [];
+            const lineas = contenido.split('\n');
+        
+            let dentroDeConfiguracion = false;
+        
+            lineas.forEach((linea) => {
+                linea = linea.trim();
+        
+                if (linea === 'conf_ini') {
+                    dentroDeConfiguracion = true; // Inicia la configuración
+                } else if (linea === 'conf:fin') {
+                    dentroDeConfiguracion = false; // Finaliza la configuración
+                } else if (dentroDeConfiguracion && linea.startsWith('ADD')) {
+                    // Extraer las coordenadas de la línea
+                    const match = linea.match(/x:\s*(\d+),\s*y:\s*(\d+)/);
+                    if (match) {
+                        const x = parseInt(match[1]);
+                        const y = parseInt(match[2]);
+                        console.log(`Coordenadas extraídas: x=${x}, y=${y}`); // Para depuración
+                        
+                        if (x < 1 || x > 4 || y < 1 || y > 4) {
+                            posicionesInvalidas = true; // Cambiar a true si hay coordenadas inválidass
+                            configuraciones_malas.push(`La posición: x=${x}, y=${y}, es invalida, eliminando`)
+                        }
+        
+                        // Calcular la posición en la matriz (1 basado)
+                        const posicion = (y - 1) * 4 + x; // Matriz 4x4
+                        posiciones.push(posicion.toString());
+                        // Validamos que la posición esté dentro del rango esperado
+                        console.log(`Posición extraída: ${posicion}`); // Para depuración
+                    }
+                }
+            });
+
+            // Significa que no obtuvo el conf_fin
+            if (dentroDeConfiguracion === true) {
+                console.log("Nunca cerraste la instrucción");
+                sintaxis = true;
+            }
+
+            if (posiciones.length === 0){
+                console.log("No se obtuvo la sintaxis correcta");
+                sintaxis = true;
+            }
+            
+            console.log("Posiciones extraídas:", posiciones); // Para depuración
+            return posiciones;
         }
 
-        // Función para manejar la lógica de iniciar el juego
-        function iniciarJuego() {
+        // Función para iniciar un nuevo juego
+        async function configurarJuego() {
             const contenido = document.getElementById('entradaArchivo').value;
-            if (contenido) {
-                fetch("/procesar", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ texto: contenido })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('salidaArchivo').value = data.resultado;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
+            console.log("Contenido del archivo:", contenido); // Para depuración
+            let mensajeError = ""; // Variable para almacenar el mensaje de error
+
+            if (posicionesInvalidas) {
+                mensajeError = "Hay posiciones inválidas en el archivo";
+                // Iteramos sobre la lista de configuraciones malas y las mostramos
+                configuraciones_malas.forEach(configuracion => {
+                    mensajeError += `\n${configuracion}`; // Agregamos la configuración mala al mensaje de error
                 });
+                document.getElementById('salidaArchivo').value = mensajeError; // Mostrar el error en el textarea de salida
+                posicionesInvalidas = false; // Reiniciar la variable para la próxima vez
+            }
+
+            if (sintaxis) {
+                mensajeError = "El archivo no contiene las etiquetas 'conf_ini' y 'conf:fin'.";
+                console.error(mensajeError);
+                document.getElementById('salidaArchivo').value = mensajeError; // Mostrar el error en el textarea de salida
+                enviarX();
+                sintaxis = false; // Reiniciamos la variable para la proxima vez
+                return; // Salir de la función
+            }
+
+            if (contenido) {
+                try {
+                    // Esperar a que se complete la solicitud al endpoint de procesar
+                    const response = await fetch("http://localhost:3000/procesar", { // URL del backend
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ content: contenido }) // Enviamos el contenido del textarea
+                    });
+
+                    const data = await response.json();
+
+                    // Llamar a enviarX después de que se complete el procesamiento
+                    enviarX();
+                } catch (error) {
+                    console.error("Error al procesar el archivo:", error);
+                    document.getElementById('salidaArchivo').value = "Error al procesar el archivo. Revisa la consola para más detalles.";
+                }
             } else {
                 alert("Primero carga un archivo.");
             }
-        }
 
+            // Verificamos si mensajeError tiene un valor
+            if (mensajeError == "") {
+                document.getElementById('salidaArchivo').value = "Coordenadas enviadas de forma correcta"; // Mostrar el error en el textarea de salida
+            } else {
+                document.getElementById('salidaArchivo').value = mensajeError; // Mostrar el error en el textarea de salida
+            }
+        }
+        document.querySelectorAll('.bomba').forEach(bomba => {
+        bomba.addEventListener('click', () => {
+            // Crear la explosión
+            const explosion = document.createElement('div');
+            explosion.classList.add('explosion');
+            bomba.appendChild(explosion);
+
+            // Eliminar la explosión después de la animación
+            setTimeout(() => {
+                explosion.remove();
+            }, 500);
+        });
+    });
+
+
+    function enviarX(){
+        // Llamar al backend para ajustar el modo a "configuracion"
+        fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mode: "X" }) // Enviamos el modo
+        })
+        .catch(error => {
+            console.error("Error al ajustar el modo:", error);
+        });
+    }
+
+    function mostrarTab(tab) {
+        document.getElementById('tab-principal').style.display = tab === 'principal' ? 'block' : 'none';
+        document.getElementById('tab-configuracion').style.display = tab === 'configuracion' ? 'block' : 'none';
+        document.getElementById('tab-iniciarJuego').style.display = tab === 'iniciarJuego' ? 'block' : 'none';
+    
+        // Llamar a ajustarModo si se cambia a la pestaña de configuración
+        if (tab === 'configuracion') {
+            const iframe = document.querySelector('#tab-configuracion iframe');
+            iframe.src = iframe.src; // Forzar recarga del iframe 
+
+            // Llamar al backend para ajustar el modo a "configuracion"
+            fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mode: "configuration" }) // Enviamos el modo
+            })
+            .catch(error => {
+                console.error("Error al ajustar el modo:", error);
+            });
+        } else if (tab === 'iniciarJuego') {
+            const iframe = document.querySelector('#tab-iniciarJuego iframe');
+            iframe.src = iframe.src; // Forzar recarga del iframe
+
+            // LLamar al backend para ajustar el modo a "game"
+            fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mode: "game" }) // Enviamos el modo
+            })
+            .catch(error => {
+                console.error("Error al ajustar el modo:", error);
+            });
+        }
+    }
+    
+    function enviarX(){
+        // Llamar al backend para ajustar el modo a "configuracion"
+        fetch("http://localhost:3000/ajustar-modo", { // URL del backend
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mode: "X" }) // Enviamos el modo
+        })
+        .catch(error => {
+            console.error("Error al ajustar el modo:", error);
+        });
+    }
     </script>
 </body>
 </html>

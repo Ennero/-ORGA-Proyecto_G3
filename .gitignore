@@ -1,0 +1,23 @@
+# Ignorar archivos de logs
+*.log
+
+# Ignorar carpetas de compilación
+/build/
+/dist/
+
+# Ignorar archivos temporales de sistema operativo o IDE
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+
+# Ignorar archivos binarios
+*.exe
+*.out
+
+# Ignorar dependencias (ej. en Node.js)
+node_modules/
+
+
+frontend\__pycache__
+
