@@ -468,10 +468,23 @@ Administró de manera eficiente el presupuesto asignado al grupo, garantizando u
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="container text-center mt-5">
-    <h5>Video 1: Prueba de la ram en Proteus</h5>
+    <h5>Video 1: Prueba de la ram en Protoboard</h5>
     <a href="https://drive.google.com/file/d/1MYDP4kPjVaeLNfP_WM1HMH3yRQsBn5o6/view?usp=sharing" 
        target="_blank" 
        class="btn btn-primary btn-lg shadow-lg">
         🎥 Ver Video
+    </a>
+    <h5>Video 2: Ram en placa y probandolo con el LCD</h5>
+    <a href="https://drive.google.com/file/d/1JMUuILzad8HFPqNjC0d8QVsLsHt01JjZ/view?usp=sharing" 
+       target="_blank" 
+       class="btn btn-primary btn-lg shadow-lg">
+        🎥 Ver Video
+    </a>
+    <h5>Video 3: Funcionalidad del backend y frontend</h5>
+    <a href="https://drive.google.com/file/d/19ZeDQyc5qT1bdo5cv2Qly2aTSof01lJx/view?usp=sharing" 
+       target="_blank" 
+       class="btn btn-primary btn-lg shadow-lg">
+        🎥 Ver Video
+    </a>
 </div>
 </div>
