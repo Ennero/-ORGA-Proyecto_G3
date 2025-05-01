@@ -34,38 +34,30 @@
 
 <div style="font-family: 'Times New Roman', Times, serif;">
 
-# ÍNDICE  
+# ÍNDICE
 
 1. [INTRODUCCIÓN](#introducción)
 2. [OBJETIVOS](#objetivos)
-    1. [Objetivo General](#objetivo-general)
-    2. [Objetivos Específicos](#objetivos-específicos)
+   1. [Objetivo General](#objetivo-general)
+   2. [Objetivos Específicos](#objetivos-específicos)
 3. [DESCRIPCIÓN DEL PROBLEMA](#descripcion-del-problema)
 4. [LÓGICA DEL SISTEMA](#lógica-del-sistema)
-5. [FUNCIONES BOOLEANAS Y MAPAS DE KARNAUGH](#funciones-booleanas-y-mapas-de-karnaugh)
-6. [DIAGRAMAS DE ESTADO](#diagramas-de-estado)
-7. [DIAGRAMAS CON EXPLICACIÓN](#diagramas-con-explicación)
-8. [DIAGRAMAS DEL DISEÑO DEL CIRCUITO](#diagramas-del-diseño-del-circuito)
-9. [DIAGRAMA DEL CIRCUITO IMPRESO](#diagrama-del-circuito-impreso)
-10. [EQUIPO UTILIZADO](#equipo-utilizado)
-11. [PRESUPUESTO](#presupuesto)
-12. [APORTE INDIVIDUAL DE CADA INTEGRANTE](#aporte-individual-de-cada-integrante)
-    - [Enner Mendizabal - 202302220](#enner-mendizabal---202302220)
-    - [Esteban Sánchez Túchez - 202300769](#esteban-sánchez-túchez---202300769)
-    - [Juan José Sandoval Ruiz - 202300710](#juan-josé-sandoval-ruiz--202300710)
-    - [David Estuardo Barrios Ramírez - 202300670](#david-estuardo-barrios-ramírez--202300670)
-    - [Brandon Antonio Marroquín Pérez - 202300813](#brandon-antonio-marroquín-pérez-202300813)
-13. [CONCLUSIONES](#conclusiones)
-14. [RECOMENDACIONES](#recomendaciones)
-15. [ANEXOS](#anexos)
-16. [APORTE DE TODOS LOS INTEGRANTES DEL GRUPO](#aporte-de-todos-los-integrantes-del-grupo)
-17. [FOTOGRAFÍA DE LOS CIRCUITOS FÍSICOS](#fotografía-de-los-circuitos-físicos)
-18. [VIDEOS DEL FUNCIONAMIENTO DE MANERA SEPARADA](#videos-del-funcionamiento-de-manera-separada)
+   1. [Descripción Funcional de la Interfaz del Juego](#descripción-funcional-de-la-interfaz-del-juego)
+5. [CÓDIGO CON EXPLICACIÓN](#codigo-con-explicación)
+6. [DIAGRAMA DEL CIRCUITO IMPRESO](#diagrama-del-circuito-impreso)
+7. [EQUIPO UTILIZADO](#equipo-utilizado)
+8. [PRESUPUESTO](#presupuesto)
+9. [APORTE INDIVIDUAL DE CADA INTEGRANTE](#aporte-individual-de-cada-integrante)
+10. [CONCLUSIONES](#conclusiones)
+11. [RECOMENDACIONES](#recomendaciones)
+12. [ANEXOS](#anexos)
+    1. [Aporte de Todos los Integrantes del Grupo](#aporte-de-todos-los-integrantes-del-grupo)
+    2. [Fotografía de los Circuitos Físicos](#fotografía-de-los-circuitos-físicos)
+    3. [Videos del Funcionamiento de Manera Separada](#videos-del-funcionamiento-de-manera-separada)
+
 
 ## INTRODUCCIÓN  
 El presente proyecto tiene como finalidad, adentrarnos en la implementación de un juego interactivo basado en el clásico **Buscaminas**. Este prototipo deberá ser funcional mediante circuitos combinacionales y secuenciales, controlado tanto desde una plataforma web (front-end y back-end) como físicamente desde una placa implementada con componentes lógicos y comunicación serial. La experiencia busca reforzar el aprendizaje práctico de memorias RAM con Flip-Flops, comunicación serial y control de flujo de datos, fomentando el trabajo colaborativo mediante un sistema de control de versiones.
-
-
 
 
 ## OBJETIVOS  
@@ -86,113 +78,281 @@ El presente proyecto tiene como finalidad, adentrarnos en la implementación de 
 ## Descripcion del Problema
 Se desea incorporar un nuevo juego interactivo en su sistema operativo, y se ha encomendado el diseño de un prototipo del clásico juego Buscaminas. El desafío técnico consiste en implementar esta solución con circuitos lógicos y una arquitectura de dos capas (cliente-servidor), que incluya configuración de bombas mediante una interfaz web, comunicación con una placa a través de Arduino y Bluetooth, y validación del juego mediante señales LED y una pantalla LCD. El diseño debe ser preciso, ya que cualquier error en la integración de los módulos o en la implementación física del circuito impedirá su calificación.
 
-## Lógica del Sistema
-## 🛠 Configuración del Juego
-Inicialización de la RAM:
+# Lógica del Sistema
+## Descripción Funcional de la Interfaz del Juego
 
-El tablero de juego está representado por una memoria RAM 4x4 implementada físicamente con flip-flops.
+Al iniciar el juego, se abrirá la **ventana principal**, donde encontraremos las opciones principales del sistema. A continuación, se detallan:
 
-La RAM debe ser configurada al inicio enviando datos a través de comunicación serial desde un frontend en una computadora.
+## 1. Nuevo Juego
+- Permite comenzar una nueva partida desde cero.
+- Al presionar este botón, se cargará nuevamente la ventana principal del juego, reiniciando cualquier configuración o progreso anterior.
 
-El usuario puede configurar las bombas de dos formas:
+## 2. Configurar Juego - Cargar Archivo
+- Al seleccionar esta opción, se abrirá una ventana del sistema de archivos.
+- El usuario podrá elegir un archivo que contenga las coordenadas para configurar el juego.
+- Las coordenadas seleccionadas se cargarán automáticamente en un área de texto (**textArea**) dentro de la interfaz.
 
-Desde un archivo .org con las posiciones.
+## 3. Configurar Juego - Enviar Coordenadas
+- Con las coordenadas ya visibles en el textArea, el usuario puede presionar este botón para enviarlas al sistema.
+- El sistema interpretará las coordenadas y las usará como configuración inicial del juego.
 
-Desde una interfaz gráfica (pagina web).
+## 4. Configuración Personalizada
+- Al hacer clic en este botón, se abrirá una **nueva ventana**.
+- En ella, el usuario podrá seleccionar manualmente las posiciones donde desea colocar las bombas.
+- Esto se realiza mediante botones que representan las diferentes posiciones del tablero.
 
-Comunicación Serial:
+## 5. Iniciar Juego
+- Esta opción abre una ventana dedicada al desarrollo del juego.
+- El jugador podrá seleccionar casillas en el tablero.
+- Si el jugador selecciona una casilla con bomba, aparecerá una **ventana emergente** que indicará el evento.
+- El usuario podrá elegir entre:
+  - Comenzar un nuevo juego.
+  - Volver al menú principal.
 
-Un backend recibe las instrucciones desde el frontend y envía los comandos hacia un Arduino conectado al circuito físico.
+---
 
-El Arduino interpreta los datos y coloca las bombas en las posiciones indicadas.
+## Codigo con Explicación
 
-Indicación de Bombas:
+```c
+#include <LiquidCrystal_I2C.h> // Librería para controlar la pantalla LCD I2C
 
-Cada celda de la RAM tiene un LED asociado:
+// Pines de conexión
+const int DATA_PIN = 13; // Pin para enviar datos a la RAM
+const int CLK_PIN = 12;  // Pin para el reloj de la RAM
+const int pos[4][4] = {   // Matriz de pines que representan las posiciones del tablero
+  {23, 25, 27, 29}, 
+  {31, 33, 35, 37}, 
+  {39, 41, 43, 45}, 
+  {47, 49, 51, 53}
+};
+const int configLed = 6;  // LED indicador de modo configuración
+const int gameLed = 5;    // LED indicador de modo juego
+const int winLed = 4;     // LED indicador de victoria
+const int looseLed = 3;   // LED indicador de derrota
 
-Encendido si hay bomba en esa posición.
+// Inicialización de la pantalla LCD
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Dirección I2C 0x27, pantalla de 16x2
 
-Apagado si no hay bomba.
+void setup() {
+  lcd.init();           // Inicializa la pantalla LCD
+  lcd.backlight();      // Activa la luz de fondo
+  lcd.clear();          // Limpia la pantalla
+  lcd.display();        // Activa la pantalla
+  print("<- BUSCAMINAS ->", 0); // Muestra un mensaje inicial
+  Serial.begin(9600);   // Configura la comunicación serial con la PC
+  Serial1.begin(9600);  // Configura la comunicación serial con Bluetooth
+  delay(1000);
 
-## 🎮 Modo de Juego
-Inicio de la Partida:
+  // Configuración de pines de salida
+  pinMode(DATA_PIN, OUTPUT);
+  pinMode(CLK_PIN, OUTPUT);
+  digitalWrite(DATA_PIN, LOW);
+  digitalWrite(CLK_PIN, LOW);
 
-El juego inicia con el estado "Jugando", encendiendo un LED azul.
+  // Configuración de LEDs
+  pinMode(configLed, OUTPUT);
+  pinMode(gameLed, OUTPUT);
+  pinMode(looseLed, OUTPUT);
+  digitalWrite(configLed, LOW);
+  digitalWrite(gameLed, LOW);
+  digitalWrite(looseLed, LOW);
 
-Selección de Casillas:
+  // Configuración de pines de entrada para las posiciones del tablero
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      pinMode(pos[i][j], INPUT);
+    }
+  }
+}
 
-El jugador, usando su celular por Bluetooth (módulo HC-06), envía la posición que quiere verificar (entre 1 y 16).
+void loop() {
+  // Verifica si hay datos disponibles desde la PC o Bluetooth
+  if (Serial.available()) {
+    handleInput(Serial); // Maneja la entrada desde la PC
+  }
 
-El Arduino recibe la posición, consulta la RAM, y determina:
+  if (Serial1.available()) {
+    handleInput(Serial1); // Maneja la entrada desde Bluetooth
+  }
+}
 
-Si es bomba:
+// Función para manejar la entrada de datos
+void handleInput(Stream &port) {
+  String mode = "";
 
-Se muestra "Game Over" en una pantalla LCD.
+  if (port.available()) {
+    mode = port.readString(); // Lee el modo enviado (configuration o game)
 
-Se enciende el LED rojo de "Fin del juego".
+    if (mode == "configuration") {
+      turnOnConfigLed(); // Activa el LED de configuración
+      lcd.clear();
+      print("MODO", 0);
+      print("CONFIGURACION", 1);
+      while (true) {
+        if (port.peek() == 'X') { // Salida del modo configuración
+          port.read();
+          lcd.clear();
+          print("Salida del", 0);
+          print("modo config.", 1);
+          turnOffAll();
+          mode = "";
+          break;
+        } else if (port.available() >= 2) { // Recibe datos de configuración
+          byte ram_data[2];
+          ram_data[0] = port.read(); // LSB (bits 0-7)
+          ram_data[1] = port.read(); // MSB (bits 8-15)
+          lcd.clear();
+          print("Datos", 0);
+          print("recibidos", 1);
+          delay(200);
+          port.print("Byte 0: ");
+          port.println(ram_data[0], BIN);
+          port.print("Byte 1: ");
+          port.println(ram_data[1], BIN);
 
-El juego termina hasta reiniciar.
+          writeToRAM(ram_data); // Escribe los datos en la RAM
+        }
+      }
+    } else if (mode == "game") {
+      turnOnGameLed(); // Activa el LED de juego
+      lcd.clear();
+      print("MODO", 0);
+      print("JUEGO", 1);
+      int pos_whitout_bombs = 16 - getNumBombs(); // Calcula posiciones sin bombas
+      int verified_pos = 0; // Contador de posiciones verificadas
+      while (true) {
+        if (port.peek() == 'X') { // Salida del modo juego
+          port.read();
+          lcd.clear();
+          print("X - salida juego.", 1);
+          turnOffAll();
+          mode = "";
+          break;
+        } else if (port.available() >= 1) { // Recibe posición seleccionada
+          String text = port.readString();
+          int num = text.toInt() - 1;
 
-Si NO es bomba:
+          if (num > 15 || num < 0) { // Valida la posición
+            lcd.clear();
+            print("Numero de", 0);
+            print("posicion invalida.", 1);
+            continue;
+          }
 
-Se marca la posición como descubierta.
+          int row = num / 4; // Calcula la fila
+          int column = num % 4; // Calcula la columna
+          int estado = digitalRead(pos[row][column]); // Lee el estado de la posición
 
-Se incrementa el puntaje en 1 y se actualiza en la LCD.
+          if (estado == HIGH) { // Si hay bomba
+            lcd.clear();
+            print("HAY BOMBA", 0);
+            print("PERDISTE", 1);
+            turnOnLooseLed(); // Activa el LED de derrota
+            break;
+          } else { // Si no hay bomba
+            lcd.clear();
+            print("NO HAY BOMBA", 0);
+            verified_pos++;
+          }
 
-Victoria:
+          if (verified_pos >= pos_whitout_bombs) { // Si se verificaron todas las posiciones sin bombas
+            lcd.clear();
+            print("-- GANASTE --", 0);
+            turnOnWinLed(); // Activa el LED de victoria
+            break;
+          }
+        }
+      }
+    }
+  }
+}
 
-Si el jugador descubre todas las casillas sin bombas, se muestra "Ganaste" en la pantalla LCD y se enciende el LED verde.
+// Función para generar un pulso de reloj
+void pulseClock() {
+  digitalWrite(CLK_PIN, HIGH);
+  delay(50);
+  digitalWrite(CLK_PIN, LOW);
+  delay(50);
+}
 
-Reinicio:
+// Función para escribir datos en la RAM
+void writeToRAM(byte data[]) {
+  for (int i = 15; i >= 0; i--) {
+    byte currentByte = data[i / 8];
+    byte bitValue = (currentByte >> (i % 8)) & 0x01;
 
-Para reiniciar, el usuario debe enviar el comando "reinicio" vía Bluetooth, lo que:
+    digitalWrite(DATA_PIN, bitValue);
+    pulseClock();
+  }
+}
 
-Resetea el tablero.
+// Función para contar el número de bombas
+int getNumBombs() {
+  int num_bombs = 0;
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      if (digitalRead(pos[i][j]) == HIGH)
+        num_bombs++;
+    }
+  }
+  return num_bombs;
+}
 
-Apaga los LEDs de victoria o game over.
+// Funciones para controlar los LEDs
+void turnOnConfigLed() {
+  digitalWrite(configLed, HIGH);
+  digitalWrite(gameLed, LOW);
+  digitalWrite(looseLed, LOW);
+  digitalWrite(winLed, LOW);
+}
 
-Vuelve al estado de configuración inicial.
+void turnOnGameLed() {
+  digitalWrite(configLed, LOW);
+  digitalWrite(gameLed, HIGH);
+  digitalWrite(looseLed, LOW);
+  digitalWrite(winLed, LOW);
+}
 
-## ⚙ Estados del Juego (Control de LEDs)
-Jugando → LED azul encendido.
+void turnOnWinLed() {
+  digitalWrite(configLed, LOW);
+  digitalWrite(gameLed, LOW);
+  digitalWrite(looseLed, LOW);
+  digitalWrite(winLed, HIGH);
+}
 
-Game Over → LED rojo encendido.
+void turnOnLooseLed() {
+  digitalWrite(configLed, LOW);
+  digitalWrite(gameLed, LOW);
+  digitalWrite(looseLed, HIGH);
+  digitalWrite(winLed, LOW);
+}
 
-Ganaste → LED verde encendido.
+void turnOffAll() {
+  digitalWrite(configLed, LOW);
+  digitalWrite(gameLed, LOW);
+  digitalWrite(looseLed, LOW);
+  digitalWrite(winLed, LOW);
+}
 
-Los estados son mutuamente excluyentes: solo un LED puede estar activo a la vez.
+// Función para centrar texto en la pantalla LCD
+int centerText(String text) {
+  int textLength = text.length();
+  if (textLength > 16)
+    return 0;
+  return (16 - textLength) / 2;
+}
 
-## 🖥 Comunicación General
-Frontend: Página web que permite:
+// Función para imprimir texto en la pantalla LCD
+void print(String text, int row) {
+  lcd.setCursor(centerText(text), row);
+  lcd.print(text);
+}
 
-Configurar bombas (manual o por archivo).
-
-Backend:
-
-Recibe configuración del frontend.
-
-Envía datos al Arduino por serial.
-
-Arduino:
-
-Controla la RAM física.
-
-Procesa las jugadas enviadas desde el celular vía Bluetooth.
-
-## Diagramas de Estado
-
-
-## Diagramas con Explicación
-
-
-
-## Diagramas del Diseño del Circuito
-
-![alt text](image-5.png)
+```
 
 ## DIAGRAMA DEL CIRCUITO IMPRESO  
 
-
+![alt text](image-5.png)
 
 
 ## Equipo Utilizado
@@ -222,7 +382,19 @@ El equipo utilizado para la realización del proyecto, tanto adquirido como prop
 
 
 ## PRESUPUESTO  
---------------
+| Fecha       | Presupuesto                        | Q       |
+|------------|------------------------------------|--------|
+| <span class="th">24/04/2025</span> | LCD                  | Q51.00  |
+|            |LCD SOLDADO                          | Q51.00  |
+|            | GASTOS VARIOS        | Q150.00  |
+|            | <span class="subtotal">subtotal</span>                        | <span class="subtotal">Q252.00</span>  |
+| <span class="fa">25/04/2025</span> | JUMPERS Y LEDS               | Q15.25  |
+|            | PIZZAS PAPA JOHNS   | Q116.00  |
+|            | <span class="subtotal">subtotal</span>                        | <span class="subtotal">Q60.00</span>  |
+| <span class="feha">28/04/2025</span>| 3 BARRITA DE SILICON                          | Q3.00  |
+|            | GASTOS VARIOS   | Q53.00  |
+|            | <span class="subtotal">subtotal</span>                        | <span class="subtotal">Q56.00</span>  
+|            | <span class="total">TOTAL ABSOLUTO</span>                 | <span class="total">Q439.25</span>  |
 
 
 ## APORTE INDIVIDUAL DE CADA INTEGRANTE  
@@ -242,8 +414,6 @@ Se responsabilizó de desarrollar la lógica de jugabilidad en el backend del si
 
 ## Brandon Antonio Marroquín Pérez - 202300813
 Administró de manera eficiente el presupuesto asignado al grupo, garantizando una correcta distribución de los recursos materiales y financieros necesarios para cada etapa del proyecto. Elaboró el informe final del grupo, documentando detalladamente los procesos, avances y resultados obtenidos. También contribuyó activamente en el desarrollo del frontend del proyecto, en especial en las secciones relacionadas con la jugabilidad en HTML. Además, asumió la responsabilidad total del proceso de fabricación de las placas, incluyendo el planchado, la inmersión en ácido, el pulido y el acabado final, asegurando un trabajo de alta precisión, calidad y presentación estética.
-
-
 
 
 ## CONCLUSIONES  
@@ -286,10 +456,12 @@ Administró de manera eficiente el presupuesto asignado al grupo, garantizando u
 
 ## FOTOGRAFÍA DE LOS CIRCUITOS FÍSICOS  
 
+### - Ram en protoboard
+![alt text](image-6.png)
 
+### - Ram en placa
 
-
-
+![alt text](image-7.png)
 
 ## Videos del funcionamiento de manera separada
 <!-- Bootstrap CSS -->
@@ -301,36 +473,5 @@ Administró de manera eficiente el presupuesto asignado al grupo, garantizando u
        target="_blank" 
        class="btn btn-primary btn-lg shadow-lg">
         🎥 Ver Video
-    </a>
-    <h5>Video 2: --------</h5>
-    <a href="---------------" 
-       target="_blank" 
-       class="btn btn-primary btn-lg shadow-lg">
-        🎥 Ver Video
-    </a>
-    <h5>Video 3: ------------</h5>
-    <a href="--------------" 
-       target="_blank" 
-       class="btn btn-primary btn-lg shadow-lg">
-        🎥 Ver Video
-    </a>
-    <h5>Video 4:------------</h5>
-    <a href="--------" 
-       target="_blank" 
-       class="btn btn-primary btn-lg shadow-lg">
-        🎥 Ver Video
-    </a>
-    <h5>Video 5: ---------</h5>
-    <a href="------------------------" 
-       target="_blank" 
-       class="btn btn-primary btn-lg shadow-lg">
-        🎥 Ver Video
-    </a>
-    <h5>Video 6:---------------</h5>
-    <a href="---------------" 
-       target="_blank" 
-       class="btn btn-primary btn-lg shadow-lg">
-        🎥 Ver Video
-    </a>
 </div>
 </div>
