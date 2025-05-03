@@ -466,6 +466,10 @@ Administró de manera eficiente el presupuesto asignado al grupo, garantizando u
 
 ![alt text](image-7.png)
 
+## - aplicacion
+
+![alt text](image-9.png)
+
 ## Videos del funcionamiento de manera separada
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
