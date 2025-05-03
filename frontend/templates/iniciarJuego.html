@@ -158,7 +158,9 @@
                 if (posicionesBombas.includes(posicion)) {
                     this.querySelector('img').src = "{{ url_for('static', filename='img/bomba.png') }}"; // Imagen de bomba
                     enviarPosicion(posicion); // Enviar la posición al backend
-                    mostrarGameOver(); // Mostrar el modal de Game Over
+                    setTimeout(() => {
+                        mostrarGameOver(); // Mostrar el modal de Ganaste
+                    }, 2000);
                 } else {
                     enviarPosicion(posicion); // Enviar la posición al backend
                     this.querySelector('img').src = "{{ url_for('static', filename='img/hongo.png') }}"; // Imagen de teclado
@@ -169,7 +171,9 @@
 
                 if (contadorCasillasBuenas === casillasBuenas) {
                     // Si se han seleccionado todas las casillas buenas, mostrar el modal de Has ganado
-                    mostraGanaste(); // Mostrar el modal de Ganaste
+                    setTimeout(() => {
+                        mostraGanaste(); // Mostrar el modal de Ganaste
+                    }, 2000);
                 }
             }
         });

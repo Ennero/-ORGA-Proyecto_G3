@@ -16,7 +16,7 @@ let AppService = class AppService {
     puertoSerial;
     constructor() {
         this.puertoSerial = new serialport_1.SerialPort({
-            path: 'COM2',
+            path: 'COM5',
             baudRate: 9600,
         });
         this.puertoSerial.on('open', () => {
