@@ -489,5 +489,11 @@ Administró de manera eficiente el presupuesto asignado al grupo, garantizando u
        class="btn btn-primary btn-lg shadow-lg">
         🎥 Ver Video
     </a>
+    <h5>Video 4: Funcionalidad de todo junto</h5>
+    <a href="https://drive.google.com/file/d/1nDN0HsQiQ_JvGFpWvRwB1NZzscH7f67f/view?usp=sharing" 
+       target="_blank" 
+       class="btn btn-primary btn-lg shadow-lg">
+        🎥 Ver Video
+    </a>
 </div>
 </div>
