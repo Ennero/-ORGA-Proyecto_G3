@@ -1,24 +1,17 @@
-# Ignorar archivos de logs
-*.log
-
-# Ignorar carpetas de compilación
-/build/
-/dist/
-
-# Ignorar archivos temporales de sistema operativo o IDE
+# C / C++
+*.o
+*.obj
+*.exe
+*.out
+*.app
+build/
+bin/
+*.tab.c
+*.tab.h
+lex.yy.c
+ast-graph/*.svg
+ast-graph/*.pdf
 .DS_Store
 Thumbs.db
 .vscode/
-*.swp
-
-# Ignorar archivos binarios
-*.exe
-*.out
-
-# Ignorar dependencias (ej. en Node.js)
-node_modules/
-
-
-frontend\__pycache__
-
-node_modules
+.idea/
