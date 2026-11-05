@@ -1,68 +1,53 @@
-<div align="center">
+# Juego con Arduino, memoria simulada y aplicación web
 
-# ⚡ Microcontroller Hardware Interface & Web Dashboard (ORGA)
+Integración académica de Arduino y Proteus con un backend NestJS que transforma instrucciones y envía datos por puerto serial. Un frontend Flask presenta las pantallas del juego y su configuración.
 
-**Integración de hardware Arduino, comunicación serial, simulación en Proteus y dashboard de telemetría web.**
+## Requisitos
 
-[![Language](https://img.shields.io/badge/Language-C++,%20Arduino,%20Python,%20HTML-blue?style=for-the-badge)](https://github.com/Ennero/-ORGA-Proyecto_G3)
-[![Course](https://img.shields.io/badge/Course-Organización%20Computacional-003366?style=for-the-badge)](https://ingenieria.usac.edu.gt/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+Node.js 22 o compatible con NestJS 11, Python 3, un puerto serial conectado al dispositivo/simulador y Proteus para abrir los circuitos. SERIAL_PORT selecciona el puerto; el valor predeterminado es COM5.
 
-</div>
+## Ejecución
 
----
+Los comandos parten de la raíz del repositorio, salvo donde se indica otra terminal.
 
+```bash
+# Desde la raíz: dependencia serial compartida por el backend
+npm ci
+cd backend
+npm ci
+npm run start:dev
 
-## 📌 Descripción General
-
-Este repositorio contiene la implementación y entrega de **⚡ Microcontroller Hardware Interface & Web Dashboard (ORGA)**, desarrollado en el curso de **Organización Computacional** en la Universidad de San Carlos de Guatemala.
-
-- **Objetivo:** Integración de hardware Arduino, comunicación serial, simulación en Proteus y dashboard de telemetría web.
-- **Stack Principal:** `C++, Arduino, Python, HTML`.
-- **Área:** Ciencias de la Computación, Algoritmos y Desarrollo de Software.
-
----
-
-## 🚀 Características y Componentes
-
-- Implementación modular y buenas prácticas de codificación.
-- Manejo estructurado de datos, control de flujo y validaciones.
-- Documentación y scripts de soporte para compilación o ejecución.
-
----
-
-## 📦 Estructura del Proyecto
-
-```
--ORGA-Proyecto_G3/
-├── src/ o archivos de código fuente
-├── docs/ (si aplica)
-├── .gitignore
-├── LICENSE
-└── README.md
+# Otra terminal, desde la raíz:
+python -m pip install -r frontend/requirements.txt
+python frontend/app.py
 ```
 
----
+## Recorrido de demostración
 
-## ⚙️ Requisitos y Ejecución
+Abrir http://127.0.0.1:5000; el backend escucha en http://localhost:3000. Configurar el puerto serial antes de enviar instrucciones. Consultar el manual para emparejar los sketches y el circuito de Proteus.
 
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/Ennero/-ORGA-Proyecto_G3.git
-   cd -ORGA-Proyecto_G3
-   ```
-2. Ejecutar según el entorno (`C++, Arduino, Python, HTML`):
-   - Consultar los scripts o archivos principales del proyecto para parámetros específicos.
+## Organización
 
----
+Carpetas de la entrega: [`arduino/`](arduino/), [`backend/`](backend/), [`frontend/`](frontend/), [`informe/`](informe/), [`manuales/`](manuales/), [`proteus/`](proteus/).
 
-## 📄 Licencia
+## Documentación
 
-Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+- [manualTecnico](manuales/manualTecnico.mkd)
+- [manualUsuario](manuales/manualUsuario.mkd)
+- [Documentacion](informe/Documentacion.md)
 
----
+## Alcance y límites
 
-## 👨‍💻 Autor
+El flujo de hardware requiere Arduino/Proteus y cableado o puerto virtual. El servidor web por sí solo no sustituye esa simulación; las rutas Flask de procesamiento no representan todas las operaciones del backend.
 
-- **Enner Mendizabal** - [@Ennero](https://github.com/Ennero)  
-- *Facultad de Ingeniería, Universidad de San Carlos de Guatemala.*
+## Contexto y licencia
+
+Trabajo académico o de aprendizaje conservado en el portafolio de [Enner Mendizabal](https://github.com/Ennero). Los créditos de los trabajos en grupo se conservan en sus entregas y manuales.
+
+Consultar [LICENSE](LICENSE) para la licencia de la raíz. Las dependencias y los componentes con avisos o licencias propios conservan sus condiciones.
+
+### Licencias declaradas por componente
+
+La licencia de la raíz no sustituye las declaraciones de estos manifiestos:
+
+- `backend/package.json`: `UNLICENSED`.

@@ -7,7 +7,7 @@ export class AppService {
 
   constructor() {
     this.puertoSerial = new SerialPort({
-      path: 'COM5', // Asegúrate de que sea el correcto
+      path: process.env.SERIAL_PORT || 'COM5', // Configure the connected or virtual serial port
       baudRate: 9600,
     });   
 
